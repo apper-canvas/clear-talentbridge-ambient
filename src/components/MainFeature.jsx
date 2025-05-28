@@ -793,6 +793,8 @@ const MainFeature = () => {
               )}
             </div>
           </motion.div>
+        )}
+
 
         {/* Profile Tab */}
         {activeTab === 'profile' && (
@@ -1084,6 +1086,8 @@ const MainFeature = () => {
               </div>
             </div>
           </motion.div>
+        )}
+
         )}
       </AnimatePresence>
 
