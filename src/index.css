@@ -11,7 +11,6 @@
     @apply font-heading;
   }
 }
-}
 
 @layer components {
   .glass-card {
