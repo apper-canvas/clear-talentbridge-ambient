@@ -9,6 +9,8 @@ const MainFeature = () => {
   const [location, setLocation] = useState('')
   const [jobType, setJobType] = useState('')
   const [salaryRange, setSalaryRange] = useState('')
+  const [selectedJob, setSelectedJob] = useState(null)
+
   const [applications, setApplications] = useState([])
   const [newJob, setNewJob] = useState({
     title: '',
@@ -18,6 +20,8 @@ const MainFeature = () => {
     salary: '',
     description: ''
   })
+
+  // Extended job data with descriptions, requirements, and benefits
 
   // Mock job data
   const mockJobs = [
@@ -30,7 +34,30 @@ const MainFeature = () => {
       salary: '$120K - $160K',
       skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
       postedAt: '2 days ago',
-      logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=100&fit=crop&crop=face'
+      logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=100&fit=crop&crop=face',
+      description: 'We are looking for a Senior React Developer to join our dynamic team. You will be responsible for developing and maintaining high-quality web applications using modern React ecosystem. This role involves collaborating with cross-functional teams to deliver exceptional user experiences.',
+      requirements: [
+        '5+ years of experience with React and JavaScript',
+        'Strong knowledge of TypeScript and modern ES6+',
+        'Experience with state management (Redux, Context API)',
+        'Familiarity with testing frameworks (Jest, React Testing Library)',
+        'Knowledge of Node.js and RESTful APIs',
+        'Experience with Git and agile development practices'
+      ],
+      benefits: [
+        'Competitive salary and equity package',
+        'Health, dental, and vision insurance',
+        'Flexible work hours and remote work options',
+        'Professional development budget',
+        'Free snacks and catered meals',
+        '401(k) matching'
+      ],
+      companyInfo: {
+        size: '100-500 employees',
+        industry: 'Technology',
+        founded: '2015',
+        website: 'https://techcorp.com'
+      }
     },
     {
       id: 2,
@@ -41,7 +68,30 @@ const MainFeature = () => {
       salary: '$90K - $120K',
       skills: ['Figma', 'Adobe Creative Suite', 'Prototyping', 'User Research'],
       postedAt: '1 week ago',
-      logo: 'https://images.unsplash.com/photo-1553028826-f4804151e596?w=100&h=100&fit=crop&crop=face'
+      logo: 'https://images.unsplash.com/photo-1553028826-f4804151e596?w=100&h=100&fit=crop&crop=face',
+      description: 'Join our creative team as a UX/UI Designer and help shape the future of digital experiences. You will work on diverse projects ranging from mobile apps to web platforms, conducting user research and creating intuitive designs that delight our users.',
+      requirements: [
+        '3+ years of experience in UX/UI design',
+        'Proficiency in Figma and Adobe Creative Suite',
+        'Strong portfolio showcasing design process',
+        'Experience with user research and usability testing',
+        'Knowledge of responsive design principles',
+        'Understanding of front-end development basics'
+      ],
+      benefits: [
+        'Creative and collaborative work environment',
+        'Health and wellness programs',
+        'Flexible PTO policy',
+        'Design tools and software budget',
+        'Conference and workshop attendance',
+        'Team retreats and social events'
+      ],
+      companyInfo: {
+        size: '50-100 employees',
+        industry: 'Design & Creative',
+        founded: '2012',
+        website: 'https://designstudio.com'
+      }
     },
     {
       id: 3,
@@ -52,7 +102,30 @@ const MainFeature = () => {
       salary: '$110K - $140K',
       skills: ['Product Strategy', 'Agile', 'Analytics', 'Leadership'],
       postedAt: '3 days ago',
-      logo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
+      logo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+      description: 'Lead product development initiatives as a Product Manager at Innovation Labs. You will drive product strategy, work closely with engineering and design teams, and ensure we build products that meet market needs and business objectives.',
+      requirements: [
+        '4+ years of product management experience',
+        'Strong analytical and problem-solving skills',
+        'Experience with agile development methodologies',
+        'Knowledge of product analytics tools',
+        'Excellent communication and leadership skills',
+        'Technical background preferred'
+      ],
+      benefits: [
+        'Stock options and performance bonuses',
+        'Comprehensive healthcare coverage',
+        'Unlimited vacation policy',
+        'Learning and development stipend',
+        'Modern office space and equipment',
+        'Startup culture with growth opportunities'
+      ],
+      companyInfo: {
+        size: '25-50 employees',
+        industry: 'Technology Startup',
+        founded: '2019',
+        website: 'https://innovationlabs.com'
+      }
     },
     {
       id: 4,
@@ -63,9 +136,33 @@ const MainFeature = () => {
       salary: '$130K - $170K',
       skills: ['Python', 'Machine Learning', 'SQL', 'TensorFlow'],
       postedAt: '5 days ago',
-      logo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+      logo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+      description: 'Join our AI team as a Data Scientist and work on cutting-edge machine learning projects. You will analyze large datasets, build predictive models, and help drive data-driven decision making across the organization.',
+      requirements: [
+        'PhD or Masters in Data Science, Statistics, or related field',
+        'Strong programming skills in Python and R',
+        'Experience with machine learning frameworks',
+        'Knowledge of SQL and database systems',
+        'Statistical analysis and modeling expertise',
+        'Experience with cloud platforms (AWS, GCP, Azure)'
+      ],
+      benefits: [
+        'Highly competitive compensation package',
+        'Research and conference budget',
+        'Flexible work arrangements',
+        'Health and wellness benefits',
+        'Equity participation',
+        'Cutting-edge technology stack'
+      ],
+      companyInfo: {
+        size: '200-500 employees',
+        industry: 'Artificial Intelligence',
+        founded: '2017',
+        website: 'https://aidynamics.com'
+      }
     }
   ]
+
 
   const [filteredJobs, setFilteredJobs] = useState(mockJobs)
 
@@ -141,6 +238,29 @@ const MainFeature = () => {
     })
     toast.success('Job posted successfully!')
   }
+
+  const handleJobClick = (job) => {
+    setSelectedJob(job)
+  }
+
+  const closeJobDetails = () => {
+    setSelectedJob(null)
+  }
+
+  // Close modal on escape key
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      closeJobDetails()
+    }
+  }
+
+  // Close modal on backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeJobDetails()
+    }
+  }
+
 
   const tabs = [
     { id: 'search', label: 'Find Jobs', icon: 'Search' },
@@ -273,13 +393,14 @@ const MainFeature = () => {
               {filteredJobs.map((job) => (
                 <motion.div
                   key={job.id}
-                  className="job-card"
+                  className="job-card cursor-pointer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
+                  onClick={() => handleJobClick(job)}
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div className="flex items-start space-x-4">
+                    <div className="flex items-start space-x-4 flex-1">
                       <img
                         src={job.logo}
                         alt={job.company}
@@ -322,7 +443,7 @@ const MainFeature = () => {
                       </div>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3" onClick={(e) => e.stopPropagation()}>
                       <button className="px-6 py-3 neu-button rounded-xl font-medium text-surface-700 dark:text-surface-300 hover:scale-105 transition-all duration-200">
                         <div className="flex items-center space-x-2">
                           <ApperIcon name="Bookmark" className="h-4 w-4" />
@@ -330,7 +451,10 @@ const MainFeature = () => {
                         </div>
                       </button>
                       <button
-                        onClick={() => handleApply(job.id)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleApply(job.id)
+                        }}
                         className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                       >
                         <div className="flex items-center space-x-2">
@@ -341,6 +465,7 @@ const MainFeature = () => {
                     </div>
                   </div>
                 </motion.div>
+
               ))}
             </div>
           </motion.div>
@@ -530,6 +655,190 @@ const MainFeature = () => {
             </div>
           </motion.div>
         )}
+
+      {/* Job Details Modal */}
+      <AnimatePresence>
+        {selectedJob && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={handleBackdropClick}
+            onKeyDown={handleKeyDown}
+            tabIndex={-1}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="glass-card rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-start space-x-4">
+                  <img
+                    src={selectedJob.logo}
+                    alt={selectedJob.company}
+                    className="w-20 h-20 rounded-xl object-cover border-2 border-surface-200 dark:border-surface-700"
+                  />
+                  <div>
+                    <h2 className="text-3xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                      {selectedJob.title}
+                    </h2>
+                    <p className="text-xl text-surface-700 dark:text-surface-300 mb-3">
+                      {selectedJob.company}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center space-x-1">
+                        <ApperIcon name="MapPin" className="h-4 w-4" />
+                        <span>{selectedJob.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <ApperIcon name="Clock" className="h-4 w-4" />
+                        <span>{selectedJob.type}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <ApperIcon name="DollarSign" className="h-4 w-4" />
+                        <span>{selectedJob.salary}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <ApperIcon name="Calendar" className="h-4 w-4" />
+                        <span>{selectedJob.postedAt}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={closeJobDetails}
+                  className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="h-6 w-6 text-surface-500" />
+                </button>
+              </div>
+
+              {/* Skills */}
+              {selectedJob.skills && selectedJob.skills.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3">
+                    Required Skills
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedJob.skills.map((skill, index) => (
+                      <span key={index} className="skill-tag">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Job Description */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3">
+                  Job Description
+                </h3>
+                <p className="text-surface-700 dark:text-surface-300 leading-relaxed">
+                  {selectedJob.description}
+                </p>
+              </div>
+
+              {/* Requirements */}
+              {selectedJob.requirements && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3">
+                    Requirements
+                  </h3>
+                  <ul className="space-y-2">
+                    {selectedJob.requirements.map((requirement, index) => (
+                      <li key={index} className="flex items-start space-x-2">
+                        <ApperIcon name="Check" className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-surface-700 dark:text-surface-300">{requirement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Benefits */}
+              {selectedJob.benefits && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3">
+                    Benefits & Perks
+                  </h3>
+                  <ul className="space-y-2">
+                    {selectedJob.benefits.map((benefit, index) => (
+                      <li key={index} className="flex items-start space-x-2">
+                        <ApperIcon name="Gift" className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-surface-700 dark:text-surface-300">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Company Info */}
+              {selectedJob.companyInfo && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3">
+                    About {selectedJob.company}
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-sm text-surface-500 dark:text-surface-400">Company Size</p>
+                      <p className="font-medium text-surface-900 dark:text-surface-100">{selectedJob.companyInfo.size}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-surface-500 dark:text-surface-400">Industry</p>
+                      <p className="font-medium text-surface-900 dark:text-surface-100">{selectedJob.companyInfo.industry}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-surface-500 dark:text-surface-400">Founded</p>
+                      <p className="font-medium text-surface-900 dark:text-surface-100">{selectedJob.companyInfo.founded}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-surface-500 dark:text-surface-400">Website</p>
+                      <a
+                        href={selectedJob.companyInfo.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-primary hover:text-primary-dark transition-colors"
+                      >
+                        Visit Website
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                <button className="px-6 py-3 neu-button rounded-xl font-medium text-surface-700 dark:text-surface-300 hover:scale-105 transition-all duration-200">
+                  <div className="flex items-center justify-center space-x-2">
+                    <ApperIcon name="Bookmark" className="h-4 w-4" />
+                    <span>Save Job</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => {
+                    handleApply(selectedJob.id)
+                    closeJobDetails()
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <ApperIcon name="Send" className="h-4 w-4" />
+                    <span>Apply Now</span>
+                  </div>
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       </AnimatePresence>
     </div>
   )
