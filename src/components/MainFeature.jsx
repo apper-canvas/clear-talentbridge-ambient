@@ -1085,6 +1085,8 @@ const MainFeature = () => {
             </div>
           </motion.div>
         )}
+      </AnimatePresence>
+
 
 
       {/* Job Details Modal */}

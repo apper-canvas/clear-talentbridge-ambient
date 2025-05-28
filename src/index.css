@@ -66,7 +66,6 @@
   transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
-
 /* Custom Toast Styling */
 .Toastify__toast-container {
   font-family: inherit;
@@ -109,6 +108,4 @@
 
 .Toastify__close-button:hover {
   opacity: 1;
-}
-
 }
