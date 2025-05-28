@@ -7,6 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: '#ffffff',
+        foreground: '#0f172a',
+        border: '#e2e8f0',
         primary: {
           DEFAULT: '#3b82f6',
           light: '#60a5fa',
@@ -46,7 +49,6 @@ export default {
         '2xl': '1rem'
       }
     }
-  },
   plugins: [],
   darkMode: 'class',
 }
