@@ -9,6 +9,22 @@ const MainFeature = () => {
   const [location, setLocation] = useState('')
   const [jobType, setJobType] = useState('')
   const [salaryRange, setSalaryRange] = useState('')
+  const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    location: '',
+    currentRole: '',
+    experienceLevel: '',
+    preferredJobType: '',
+    skills: [],
+    about: '',
+    documents: []
+  })
+  const [newSkill, setNewSkill] = useState('')
+  const [dragActive, setDragActive] = useState(false)
+
   const [selectedJob, setSelectedJob] = useState(null)
 
   const [applications, setApplications] = useState([])
@@ -265,8 +281,131 @@ const MainFeature = () => {
   const tabs = [
     { id: 'search', label: 'Find Jobs', icon: 'Search' },
     { id: 'post', label: 'Post Job', icon: 'Plus' },
-    { id: 'applications', label: 'My Applications', icon: 'FileText' }
+    { id: 'applications', label: 'My Applications', icon: 'FileText' },
+    { id: 'profile', label: 'My Profile', icon: 'User' }
   ]
+
+  const handleProfileSave = () => {
+    if (!profile.firstName || !profile.lastName || !profile.email) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(profile.email)) {
+      toast.error('Please enter a valid email address')
+      return
+    }
+
+    // Save to localStorage for demonstration
+    localStorage.setItem('userProfile', JSON.stringify(profile))
+    toast.success('Profile saved successfully!')
+  }
+
+  const handleAddSkill = () => {
+    if (!newSkill.trim()) return
+    
+    if (profile.skills.includes(newSkill.trim())) {
+      toast.warning('Skill already added')
+      return
+    }
+
+    setProfile(prev => ({
+      ...prev,
+      skills: [...prev.skills, newSkill.trim()]
+    }))
+    setNewSkill('')
+    toast.success('Skill added successfully')
+  }
+
+  const handleRemoveSkill = (skillToRemove) => {
+    setProfile(prev => ({
+      ...prev,
+      skills: prev.skills.filter(skill => skill !== skillToRemove)
+    }))
+    toast.success('Skill removed')
+  }
+
+  const handleFileUpload = (files) => {
+    const file = files[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['.pdf', '.doc', '.docx', '.txt']
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase()
+    if (!allowedTypes.includes(fileExtension)) {
+      toast.error('Please upload PDF, DOC, DOCX, or TXT files only')
+      return
+    }
+
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size must be less than 10MB')
+      return
+    }
+
+    // Check if file already exists
+    if (profile.documents.some(doc => doc.name === file.name)) {
+      toast.warning('A file with this name already exists')
+      return
+    }
+
+    // Create file object with metadata
+    const fileData = {
+      id: Date.now(),
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      uploadedAt: new Date().toLocaleDateString(),
+      url: URL.createObjectURL(file) // For demonstration - in real app, this would be server URL
+    }
+
+    setProfile(prev => ({
+      ...prev,
+      documents: [...prev.documents, fileData]
+    }))
+
+    toast.success('File uploaded successfully!')
+  }
+
+  const handleDrag = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true)
+    } else if (e.type === 'dragleave') {
+      setDragActive(false)
+    }
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    
+    const files = Array.from(e.dataTransfer.files)
+    if (files && files.length > 0) {
+      handleFileUpload(files)
+    }
+  }
+
+  const handleDeleteDocument = (docId) => {
+    setProfile(prev => ({
+      ...prev,
+      documents: prev.documents.filter(doc => doc.id !== docId)
+    }))
+    toast.success('Document deleted successfully')
+  }
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -654,7 +793,299 @@ const MainFeature = () => {
               )}
             </div>
           </motion.div>
+
+        {/* Profile Tab */}
+        {activeTab === 'profile' && (
+          <motion.div
+            key="profile"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="glass-card rounded-2xl p-6">
+              <h3 className="text-2xl font-bold mb-6 text-surface-900 dark:text-surface-100">
+                Create Your Profile
+              </h3>
+              
+              <div className="space-y-8">
+                {/* Personal Information */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">
+                    Personal Information
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={profile.firstName}
+                        onChange={(e) => setProfile({...profile, firstName: e.target.value})}
+                        placeholder="John"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Last Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={profile.lastName}
+                        onChange={(e) => setProfile({...profile, lastName: e.target.value})}
+                        placeholder="Doe"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        value={profile.email}
+                        onChange={(e) => setProfile({...profile, email: e.target.value})}
+                        placeholder="john.doe@example.com"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={profile.phone}
+                        onChange={(e) => setProfile({...profile, phone: e.target.value})}
+                        placeholder="(555) 123-4567"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={profile.location}
+                        onChange={(e) => setProfile({...profile, location: e.target.value})}
+                        placeholder="San Francisco, CA"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Professional Information */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">
+                    Professional Information
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Current Role
+                      </label>
+                      <input
+                        type="text"
+                        value={profile.currentRole}
+                        onChange={(e) => setProfile({...profile, currentRole: e.target.value})}
+                        placeholder="Senior React Developer"
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Experience Level
+                      </label>
+                      <select
+                        value={profile.experienceLevel}
+                        onChange={(e) => setProfile({...profile, experienceLevel: e.target.value})}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      >
+                        <option value="">Select Experience Level</option>
+                        <option value="Entry Level">Entry Level (0-2 years)</option>
+                        <option value="Mid Level">Mid Level (2-5 years)</option>
+                        <option value="Senior Level">Senior Level (5-10 years)</option>
+                        <option value="Executive">Executive (10+ years)</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Preferred Job Type
+                      </label>
+                      <select
+                        value={profile.preferredJobType}
+                        onChange={(e) => setProfile({...profile, preferredJobType: e.target.value})}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      >
+                        <option value="">Select Preferred Job Type</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Freelance">Freelance</option>
+                        <option value="Internship">Internship</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Skills Section */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">
+                    Skills
+                  </h4>
+                  <div className="mb-4">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                        placeholder="Add a skill (e.g., React, JavaScript, Python)"
+                        className="flex-1 px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                      />
+                      <button
+                        onClick={handleAddSkill}
+                        className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                      >
+                        <ApperIcon name="Plus" className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                  {profile.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {profile.skills.map((skill, index) => (
+                        <div key={index} className="flex items-center gap-1 skill-tag">
+                          <span>{skill}</span>
+                          <button
+                            onClick={() => handleRemoveSkill(skill)}
+                            className="ml-1 text-primary hover:text-primary-dark"
+                          >
+                            <ApperIcon name="X" className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* About Section */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">
+                    About You
+                  </h4>
+                  <textarea
+                    value={profile.about}
+                    onChange={(e) => setProfile({...profile, about: e.target.value})}
+                    placeholder="Tell us about yourself, your experience, and what you're looking for in your next role..."
+                    rows={6}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 resize-none"
+                  />
+                </div>
+
+                {/* Resume/CV Upload */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">
+                    Resume / CV Upload
+                  </h4>
+                  
+                  {/* Upload Area */}
+                  <div
+                    className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
+                      dragActive 
+                        ? 'border-primary bg-primary/5' 
+                        : 'border-surface-300 dark:border-surface-600 hover:border-primary hover:bg-primary/5'
+                    }`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <ApperIcon name="Upload" className="h-8 w-8 text-primary" />
+                    </div>
+                    <h5 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">
+                      Drop your files here, or{' '}
+                      <label className="text-primary hover:text-primary-dark cursor-pointer">
+                        browse
+                        <input
+                          type="file"
+                          multiple={false}
+                          accept=".pdf,.doc,.docx,.txt"
+                          onChange={(e) => handleFileUpload(e.target.files)}
+                          className="hidden"
+                        />
+                      </label>
+                    </h5>
+                    <p className="text-surface-600 dark:text-surface-400">
+                      Supports: PDF, DOC, DOCX, TXT (Max 10MB)
+                    </p>
+                  </div>
+
+                  {/* Uploaded Documents */}
+                  {profile.documents.length > 0 && (
+                    <div className="mt-6">
+                      <h5 className="text-md font-semibold mb-3 text-surface-900 dark:text-surface-100">
+                        Uploaded Documents ({profile.documents.length})
+                      </h5>
+                      <div className="space-y-3">
+                        {profile.documents.map((doc) => (
+                          <div key={doc.id} className="flex items-center justify-between p-4 border border-surface-200 dark:border-surface-700 rounded-xl">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
+                                <ApperIcon name="FileText" className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-surface-900 dark:text-surface-100">{doc.name}</p>
+                                <p className="text-sm text-surface-500 dark:text-surface-400">
+                                  {formatFileSize(doc.size)} • Uploaded {doc.uploadedAt}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <a
+                                href={doc.url}
+                                download={doc.name}
+                                className="p-2 text-surface-400 hover:text-primary transition-colors"
+                                title="Download"
+                              >
+                                <ApperIcon name="Download" className="h-5 w-5" />
+                              </a>
+                              <button
+                                onClick={() => handleDeleteDocument(doc.id)}
+                                className="p-2 text-surface-400 hover:text-red-500 transition-colors"
+                                title="Delete"
+                              >
+                                <ApperIcon name="Trash2" className="h-5 w-5" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Save Button */}
+                <div className="flex justify-end pt-6 border-t border-surface-200 dark:border-surface-700">
+                  <button
+                    onClick={handleProfileSave}
+                    className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <ApperIcon name="Save" className="h-5 w-5" />
+                      <span>Save Profile</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         )}
+
 
       {/* Job Details Modal */}
       <AnimatePresence>
@@ -839,7 +1270,6 @@ const MainFeature = () => {
         )}
       </AnimatePresence>
 
-      </AnimatePresence>
     </div>
   )
 }
