@@ -236,6 +236,9 @@ const MainFeature = () => {
           <ResumeBuilder key="resume" />
         )
 
+        )}
+
+
 
         {/* Interview Tips Tab */}
         {activeTab === 'interview' && (
