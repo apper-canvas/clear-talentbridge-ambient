@@ -83,6 +83,31 @@
   }
 
 
+  .resume-template {
+    @apply bg-white shadow-lg min-h-[800px] font-sans;
+  }
+
+  .resume-modern {
+    @apply text-gray-900;
+  }
+
+  .resume-classic {
+    @apply text-gray-900 font-serif;
+  }
+
+  .resume-creative {
+    @apply bg-gradient-to-br from-blue-50 to-purple-50 text-gray-900;
+  }
+
+  .resume-section-header {
+    @apply text-lg font-semibold mb-3 border-b-2 border-gray-300 pb-1;
+  }
+
+  .resume-skill-tag {
+    @apply px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm;
+  }
+
+
 }
 
 @layer utilities {

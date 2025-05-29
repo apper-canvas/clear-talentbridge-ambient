@@ -13,6 +13,8 @@ import HelpCenter from './pages/HelpCenter'
 import ContactUs from './pages/ContactUs'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
+import ResumeBuilder from './pages/ResumeBuilder'
+
 
 import NotFound from './pages/NotFound'
 
@@ -24,6 +26,8 @@ function App() {
         <Route path="/browse-jobs" element={<BrowseJobs />} />
         <Route path="/create-profile" element={<CreateProfile />} />
         <Route path="/upload-resume" element={<UploadResume />} />
+        <Route path="/resume-builder" element={<ResumeBuilder />} />
+
         <Route path="/skill-assessment" element={<SkillAssessment />} />
         <Route path="/post-jobs" element={<PostJobs />} />
         <Route path="/search-candidates" element={<SearchCandidates />} />
