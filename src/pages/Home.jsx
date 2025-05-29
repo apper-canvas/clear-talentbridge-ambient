@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MainFeature from '../components/MainFeature'
@@ -235,9 +237,10 @@ const Home = () => {
                 <ul className="space-y-2">
                   {section.links.map((link, linkIndex) => (
                     <li key={linkIndex}>
-                      <a href="#" className="text-surface-400 hover:text-primary transition-colors">
+                      <Link to={link === 'Browse Jobs' ? '/browse-jobs' : link === 'Create Profile' ? '/create-profile' : link === 'Upload Resume' ? '/upload-resume' : link === 'Skill Assessment' ? '/skill-assessment' : link === 'Post Jobs' ? '/post-jobs' : link === 'Search Candidates' ? '/search-candidates' : link === 'Manage Applications' ? '/manage-applications' : link === 'Company Profile' ? '/company-profile' : link === 'Help Center' ? '/help-center' : link === 'Contact Us' ? '/contact-us' : link === 'Privacy Policy' ? '/privacy-policy' : '/terms-of-service'} className="text-surface-400 hover:text-primary transition-colors">
                         {link}
-                      </a>
+                      </Link>
+
                     </li>
                   ))}
                 </ul>
