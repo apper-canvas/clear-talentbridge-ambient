@@ -5,6 +5,8 @@ import { toast } from 'react-toastify'
 import ApperIcon from '../components/ApperIcon'
 
 const CreateProfile = () => {
+  const [isProfileCreated, setIsProfileCreated] = useState(false)
+
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     // Personal Information
@@ -120,9 +122,50 @@ const CreateProfile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    toast.success('Profile created successfully!')
-    console.log('Profile data:', formData)
+    
+    // Validate required fields
+    const requiredFields = {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email Address',
+      location: 'Location',
+      title: 'Professional Title',
+      summary: 'Professional Summary',
+      experience: 'Years of Experience',
+      industry: 'Industry'
+    }
+    
+    const missingFields = []
+    Object.entries(requiredFields).forEach(([field, label]) => {
+      if (!formData[field] || formData[field].trim() === '') {
+        missingFields.push(label)
+      }
+    })
+    
+    if (missingFields.length > 0) {
+      toast.error(`Please fill in required fields: ${missingFields.join(', ')}`)
+      return
+    }
+    
+    // Save profile data
+    try {
+      // Simulate saving to backend (using localStorage for demo)
+      const profileData = {
+        ...formData,
+        createdAt: new Date().toISOString(),
+        id: Date.now().toString()
+      }
+      
+      localStorage.setItem('userProfile', JSON.stringify(profileData))
+      
+      setIsProfileCreated(true)
+      toast.success('Profile created successfully!')
+    } catch (error) {
+      toast.error('Failed to create profile. Please try again.')
+      console.error('Profile creation error:', error)
+    }
   }
+
 
   const renderStep = () => {
     switch (currentStep) {
@@ -609,6 +652,207 @@ const CreateProfile = () => {
     }
   }
 
+
+  const renderProfilePreview = () => {
+    return (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h3 className="text-3xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+            Profile Preview
+          </h3>
+          <p className="text-surface-600 dark:text-surface-300">
+            Your professional profile is ready!
+          </p>
+        </div>
+
+        {/* Profile Header */}
+        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            <div className="w-32 h-32 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center">
+              {formData.profileImage ? (
+                <img 
+                  src={URL.createObjectURL(formData.profileImage)} 
+                  alt="Profile" 
+                  className="w-32 h-32 rounded-full object-cover"
+                />
+              ) : (
+                <ApperIcon name="User" className="h-16 w-16 text-primary" />
+              )}
+            </div>
+            <div className="text-center md:text-left flex-1">
+              <h2 className="text-3xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                {formData.firstName} {formData.lastName}
+              </h2>
+              <p className="text-xl text-primary font-semibold mb-2">{formData.title}</p>
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 text-surface-600 dark:text-surface-300">
+                <div className="flex items-center gap-1">
+                  <ApperIcon name="MapPin" className="h-4 w-4" />
+                  <span>{formData.location}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <ApperIcon name="Mail" className="h-4 w-4" />
+                  <span>{formData.email}</span>
+                </div>
+                {formData.phone && (
+                  <div className="flex items-center gap-1">
+                    <ApperIcon name="Phone" className="h-4 w-4" />
+                    <span>{formData.phone}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Professional Summary */}
+        <div className="bg-white dark:bg-surface-800 rounded-xl p-6 border border-surface-200 dark:border-surface-700">
+          <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-4 flex items-center gap-2">
+            <ApperIcon name="FileText" className="h-5 w-5 text-primary" />
+            Professional Summary
+          </h4>
+          <p className="text-surface-700 dark:text-surface-300 leading-relaxed">
+            {formData.summary}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-4">
+            <div className="bg-primary/10 px-3 py-1 rounded-full">
+              <span className="text-sm text-primary font-medium">
+                {formData.experience} experience
+              </span>
+            </div>
+            <div className="bg-secondary/10 px-3 py-1 rounded-full">
+              <span className="text-sm text-secondary font-medium">
+                {formData.industry}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Skills */}
+        {formData.skills.length > 0 && (
+          <div className="bg-white dark:bg-surface-800 rounded-xl p-6 border border-surface-200 dark:border-surface-700">
+            <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-4 flex items-center gap-2">
+              <ApperIcon name="Award" className="h-5 w-5 text-primary" />
+              Skills
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {formData.skills.map((skill, index) => (
+                <div key={index} className="skill-tag">
+                  <span>{skill}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Education */}
+          <div className="bg-white dark:bg-surface-800 rounded-xl p-6 border border-surface-200 dark:border-surface-700">
+            <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-4 flex items-center gap-2">
+              <ApperIcon name="GraduationCap" className="h-5 w-5 text-primary" />
+              Education
+            </h4>
+            <div className="space-y-4">
+              {formData.education.filter(edu => edu.degree || edu.institution).map((edu, index) => (
+                <div key={index} className="border-l-4 border-primary/30 pl-4">
+                  <h5 className="font-semibold text-surface-900 dark:text-surface-100">
+                    {edu.degree || 'Degree'}
+                  </h5>
+                  <p className="text-surface-600 dark:text-surface-400">{edu.institution}</p>
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-sm text-surface-500">{edu.year}</span>
+                    {edu.gpa && (
+                      <span className="text-sm text-primary font-medium">GPA: {edu.gpa}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Work Experience */}
+          <div className="bg-white dark:bg-surface-800 rounded-xl p-6 border border-surface-200 dark:border-surface-700">
+            <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-4 flex items-center gap-2">
+              <ApperIcon name="Briefcase" className="h-5 w-5 text-primary" />
+              Work Experience
+            </h4>
+            <div className="space-y-4">
+              {formData.workExperience.filter(work => work.company || work.position).map((work, index) => (
+                <div key={index} className="border-l-4 border-secondary/30 pl-4">
+                  <h5 className="font-semibold text-surface-900 dark:text-surface-100">
+                    {work.position || 'Position'}
+                  </h5>
+                  <p className="text-surface-600 dark:text-surface-400">{work.company}</p>
+                  <p className="text-sm text-surface-500 mb-2">{work.duration}</p>
+                  {work.description && (
+                    <p className="text-sm text-surface-700 dark:text-surface-300">
+                      {work.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Job Preferences */}
+        <div className="bg-white dark:bg-surface-800 rounded-xl p-6 border border-surface-200 dark:border-surface-700">
+          <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-4 flex items-center gap-2">
+            <ApperIcon name="Target" className="h-5 w-5 text-primary" />
+            Job Preferences
+          </h4>
+          <div className="grid md:grid-cols-2 gap-4">
+            {formData.jobType && (
+              <div>
+                <span className="text-sm font-medium text-surface-600 dark:text-surface-400">Job Type:</span>
+                <p className="text-surface-900 dark:text-surface-100">{formData.jobType}</p>
+              </div>
+            )}
+            {formData.salaryRange && (
+              <div>
+                <span className="text-sm font-medium text-surface-600 dark:text-surface-400">Salary Range:</span>
+                <p className="text-surface-900 dark:text-surface-100">{formData.salaryRange}</p>
+              </div>
+            )}
+          </div>
+          <div className="mt-4 space-y-2">
+            {formData.remoteWork && (
+              <div className="flex items-center gap-2 text-surface-700 dark:text-surface-300">
+                <ApperIcon name="Check" className="h-4 w-4 text-green-500" />
+                <span>Open to remote work opportunities</span>
+              </div>
+            )}
+            {formData.relocation && (
+              <div className="flex items-center gap-2 text-surface-700 dark:text-surface-300">
+                <ApperIcon name="Check" className="h-4 w-4 text-green-500" />
+                <span>Willing to relocate for the right opportunity</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={() => setIsProfileCreated(false)}
+            className="px-6 py-3 neu-button rounded-xl font-medium text-surface-700 dark:text-surface-300 hover:text-primary transition-colors"
+          >
+            <ApperIcon name="Edit" className="h-4 w-4 inline mr-2" />
+            Edit Profile
+          </button>
+          <Link
+            to="/"
+            className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-center"
+          >
+            <ApperIcon name="Home" className="h-4 w-4 inline mr-2" />
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-blue-50 to-purple-50 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       {/* Navigation */}
@@ -632,109 +876,122 @@ const CreateProfile = () => {
       </nav>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div 
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="text-4xl font-bold mb-4">
-            Create Your <span className="gradient-text">Profile</span>
-          </h1>
-          <p className="text-lg text-surface-600 dark:text-surface-300">
-            Build a comprehensive profile to attract the best opportunities.
-          </p>
-        </motion.div>
+        {!isProfileCreated ? (
+          <>
+            {/* Header */}
+            <motion.div 
+              className="text-center mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-4xl font-bold mb-4">
+                Create Your <span className="gradient-text">Profile</span>
+              </h1>
+              <p className="text-lg text-surface-600 dark:text-surface-300">
+                Build a comprehensive profile to attract the best opportunities.
+              </p>
+            </motion.div>
 
-        {/* Progress Bar */}
-        <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <div className="flex justify-between items-center mb-4">
-            {Array.from({ length: totalSteps }, (_, index) => {
-              const stepNumber = index + 1
-              const isActive = stepNumber === currentStep
-              const isCompleted = stepNumber < currentStep
-              
-              return (
-                <div key={stepNumber} className="flex items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-                    isActive 
-                      ? 'bg-gradient-to-r from-primary to-secondary text-white' 
-                      : isCompleted 
-                        ? 'bg-green-500 text-white'
-                        : 'bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
-                  }`}>
-                    {isCompleted ? (
-                      <ApperIcon name="Check" className="h-5 w-5" />
-                    ) : (
-                      stepNumber
-                    )}
-                  </div>
-                  {stepNumber < totalSteps && (
-                    <div className={`w-16 h-1 mx-2 rounded transition-all ${
-                      isCompleted ? 'bg-green-500' : 'bg-surface-200 dark:bg-surface-700'
-                    }`} />
+            {/* Progress Bar */}
+            <motion.div 
+              className="mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                {Array.from({ length: totalSteps }, (_, index) => {
+                  const stepNumber = index + 1
+                  const isActive = stepNumber === currentStep
+                  const isCompleted = stepNumber < currentStep
+                  
+                  return (
+                    <div key={stepNumber} className="flex items-center">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                        isActive 
+                          ? 'bg-gradient-to-r from-primary to-secondary text-white' 
+                          : isCompleted 
+                            ? 'bg-green-500 text-white'
+                            : 'bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
+                      }`}>
+                        {isCompleted ? (
+                          <ApperIcon name="Check" className="h-5 w-5" />
+                        ) : (
+                          stepNumber
+                        )}
+                      </div>
+                      {stepNumber < totalSteps && (
+                        <div className={`w-16 h-1 mx-2 rounded transition-all ${
+                          isCompleted ? 'bg-green-500' : 'bg-surface-200 dark:bg-surface-700'
+                        }`} />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="text-center">
+                <span className="text-sm text-surface-600 dark:text-surface-400">
+                  Step {currentStep} of {totalSteps}
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Form */}
+            <motion.div 
+              className="glass-card rounded-2xl p-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <form onSubmit={handleSubmit}>
+                {renderStep()}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    disabled={currentStep === 1}
+                    className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                      currentStep === 1
+                        ? 'bg-surface-200 dark:bg-surface-700 text-surface-400 cursor-not-allowed'
+                        : 'neu-button text-surface-700 dark:text-surface-300 hover:text-primary'
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  
+                  {currentStep === totalSteps ? (
+                    <button
+                      type="submit"
+                      className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                    >
+                      Create Profile
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                    >
+                      Next
+                    </button>
                   )}
                 </div>
-              )
-            })}
-          </div>
-          <div className="text-center">
-            <span className="text-sm text-surface-600 dark:text-surface-400">
-              Step {currentStep} of {totalSteps}
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Form */}
-        <motion.div 
-          className="glass-card rounded-2xl p-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <form onSubmit={handleSubmit}>
-            {renderStep()}
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
-              <button
-                type="button"
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  currentStep === 1
-                    ? 'bg-surface-200 dark:bg-surface-700 text-surface-400 cursor-not-allowed'
-                    : 'neu-button text-surface-700 dark:text-surface-300 hover:text-primary'
-                }`}
-              >
-                Previous
-              </button>
-              
-              {currentStep === totalSteps ? (
-                <button
-                  type="submit"
-                  className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                >
-                  Create Profile
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                >
-                  Next
-                </button>
-              )}
-            </div>
-          </form>
-        </motion.div>
+              </form>
+            </motion.div>
+          </>
+        ) : (
+          <motion.div 
+            className="glass-card rounded-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {renderProfilePreview()}
+          </motion.div>
+        )}
       </div>
     </div>
   )
