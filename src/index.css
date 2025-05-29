@@ -65,6 +65,24 @@
     @apply p-6 rounded-2xl bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-2 border-yellow-200 dark:border-yellow-700 shadow-lg;
   }
 
+  .application-card {
+    @apply p-6 rounded-2xl border-2 border-transparent bg-gradient-to-br from-white to-surface-50 dark:from-surface-800 dark:to-surface-900 shadow-soft hover:border-primary/20 transition-all duration-300 hover:shadow-xl;
+  }
+
+  .cover-letter-card {
+    @apply p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700;
+  }
+
+  .status-timeline {
+    @apply relative pl-6 border-l-2 border-surface-200 dark:border-surface-700;
+  }
+
+  .status-timeline::before {
+    @apply absolute -left-1 top-2 w-2 h-2 bg-primary rounded-full;
+    content: '';
+  }
+
+
 }
 
 @layer utilities {

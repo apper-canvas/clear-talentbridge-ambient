@@ -37,6 +37,14 @@ const MainFeature = () => {
   const [showQuizResults, setShowQuizResults] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(0)
   const [quizTimer, setQuizTimer] = useState(null)
+  // Cover Letter State
+  const [showCoverLetterModal, setShowCoverLetterModal] = useState(false)
+  const [coverLetterType, setCoverLetterType] = useState('write') // 'write' or 'upload'
+  const [coverLetterText, setCoverLetterText] = useState('')
+  const [coverLetterFile, setCoverLetterFile] = useState(null)
+  const [applicationJobId, setApplicationJobId] = useState(null)
+
+
 
 
   const [selectedJob, setSelectedJob] = useState(null)
@@ -476,26 +484,114 @@ const MainFeature = () => {
 
 
   const handleApply = (jobId) => {
-    const job = mockJobs.find(j => j.id === jobId)
-    const existingApplication = applications.find(app => app.jobId === jobId)
+    setApplicationJobId(jobId)
+    setShowCoverLetterModal(true)
+    setCoverLetterText('')
+    setCoverLetterFile(null)
+    setCoverLetterType('write')
+  }
+
+  const submitApplication = () => {
+    const job = mockJobs.find(j => j.id === applicationJobId)
+    const existingApplication = applications.find(app => app.jobId === applicationJobId)
     
     if (existingApplication) {
       toast.info('You have already applied for this position')
+      setShowCoverLetterModal(false)
+      return
+    }
+
+    // Validate cover letter if provided
+    if (coverLetterType === 'write' && coverLetterText.trim() && coverLetterText.trim().length < 50) {
+      toast.error('Cover letter must be at least 50 characters long')
+      return
+    }
+
+    if (coverLetterType === 'upload' && coverLetterFile && coverLetterFile.size > 5 * 1024 * 1024) {
+      toast.error('Cover letter file must be less than 5MB')
       return
     }
 
     const newApplication = {
       id: Date.now(),
-      jobId,
+      jobId: applicationJobId,
       jobTitle: job.title,
       company: job.company,
       status: 'pending',
-      appliedAt: new Date().toLocaleDateString()
+      appliedAt: new Date().toLocaleDateString(),
+      coverLetter: {
+        type: coverLetterType,
+        content: coverLetterType === 'write' ? coverLetterText.trim() : null,
+        file: coverLetterType === 'upload' ? {
+          name: coverLetterFile?.name,
+          size: coverLetterFile?.size,
+          url: coverLetterFile ? URL.createObjectURL(coverLetterFile) : null
+        } : null
+      },
+      statusHistory: [
+        {
+          status: 'pending',
+          date: new Date().toLocaleDateString(),
+          note: 'Application submitted'
+        }
+      ]
     }
 
     setApplications([...applications, newApplication])
-    toast.success(`Successfully applied for ${job.title} at ${job.company}`)
+    setShowCoverLetterModal(false)
+    
+    const coverLetterMsg = (coverLetterType === 'write' && coverLetterText.trim()) || (coverLetterType === 'upload' && coverLetterFile) 
+      ? ' with cover letter' 
+      : ''
+    
+    toast.success(`Successfully applied for ${job.title} at ${job.company}${coverLetterMsg}`)
   }
+
+  const handleCoverLetterFileUpload = (files) => {
+    const file = files[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['.pdf', '.doc', '.docx', '.txt']
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase()
+    if (!allowedTypes.includes(fileExtension)) {
+      toast.error('Please upload PDF, DOC, DOCX, or TXT files only')
+      return
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB')
+      return
+    }
+
+    setCoverLetterFile(file)
+    toast.success('Cover letter file selected successfully')
+  }
+
+  const updateApplicationStatus = (applicationId, newStatus, note = '') => {
+    setApplications(prev => prev.map(app => {
+      if (app.id === applicationId) {
+        const updatedApp = {
+          ...app,
+          status: newStatus,
+          statusHistory: [
+            ...app.statusHistory,
+            {
+              status: newStatus,
+              date: new Date().toLocaleDateString(),
+              note: note || `Status updated to ${newStatus}`
+            }
+          ]
+        }
+        return updatedApp
+      }
+      return app
+    }))
+    toast.success(`Application status updated to ${newStatus}`)
+  }
+
+
 
   const handlePostJob = () => {
     if (!newJob.title || !newJob.company || !newJob.location) {
@@ -1173,42 +1269,155 @@ const MainFeature = () => {
               ) : (
                 <div className="space-y-4">
                   {applications.map((application) => (
-                    <div key={application.id} className="border border-surface-200 dark:border-surface-700 rounded-xl p-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                          <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">
-                            {application.jobTitle}
-                          </h4>
-                          <p className="text-surface-600 dark:text-surface-300">
-                            {application.company}
-                          </p>
-                          <p className="text-sm text-surface-500 dark:text-surface-400">
-                            Applied on {application.appliedAt}
-                          </p>
+                    <div key={application.id} className="border border-surface-200 dark:border-surface-700 rounded-xl p-6">
+                      <div className="flex flex-col space-y-4">
+                        {/* Application Header */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                          <div>
+                            <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">
+                              {application.jobTitle}
+                            </h4>
+                            <p className="text-surface-600 dark:text-surface-300">
+                              {application.company}
+                            </p>
+                            <p className="text-sm text-surface-500 dark:text-surface-400">
+                              Applied on {application.appliedAt}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                              application.status === 'pending' 
+                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                : application.status === 'reviewed'
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                : application.status === 'interview'
+                                ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                                : application.status === 'offer'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                : application.status === 'hired'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                            }`}>
+                              <div className="flex items-center space-x-1">
+                                <ApperIcon name={
+                                  application.status === 'pending' ? 'Clock' :
+                                  application.status === 'reviewed' ? 'Eye' :
+                                  application.status === 'interview' ? 'Users' :
+                                  application.status === 'offer' ? 'Gift' :
+                                  application.status === 'hired' ? 'CheckCircle' :
+                                  'XCircle'
+                                } className="h-3 w-3" />
+                                <span>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</span>
+                              </div>
+                            </span>
+                            
+                            {/* Status Update Dropdown */}
+                            <select
+                              value={application.status}
+                              onChange={(e) => updateApplicationStatus(application.id, e.target.value)}
+                              className="px-3 py-1 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-sm"
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="reviewed">Reviewed</option>
+                              <option value="interview">Interview</option>
+                              <option value="offer">Offer</option>
+                              <option value="hired">Hired</option>
+                              <option value="rejected">Rejected</option>
+                            </select>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            application.status === 'pending' 
-                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                              : application.status === 'reviewed'
-                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                              : application.status === 'interview'
-                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                              : application.status === 'rejected'
-                              ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                              : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                          }`}>
-                            {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                          </span>
-                          <button className="p-2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
-                            <ApperIcon name="MoreVertical" className="h-5 w-5" />
-                          </button>
-                        </div>
+
+                        {/* Cover Letter Section */}
+                        {application.coverLetter && (application.coverLetter.content || application.coverLetter.file) && (
+                          <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
+                            <h5 className="text-md font-semibold text-surface-900 dark:text-surface-100 mb-2 flex items-center space-x-2">
+                              <ApperIcon name="FileText" className="h-4 w-4" />
+                              <span>Cover Letter</span>
+                            </h5>
+                            {application.coverLetter.type === 'write' && application.coverLetter.content && (
+                              <div className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4">
+                                <p className="text-surface-700 dark:text-surface-300 text-sm leading-relaxed">
+                                  {application.coverLetter.content.length > 200 
+                                    ? `${application.coverLetter.content.substring(0, 200)}...`
+                                    : application.coverLetter.content
+                                  }
+                                </p>
+                                {application.coverLetter.content.length > 200 && (
+                                  <button 
+                                    onClick={() => {
+                                      // Toggle full text view - could be implemented with state
+                                      toast.info('Full cover letter view feature coming soon')
+                                    }}
+                                    className="text-primary hover:text-primary-dark text-sm mt-2"
+                                  >
+                                    Read more
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                            {application.coverLetter.type === 'upload' && application.coverLetter.file && (
+                              <div className="bg-surface-50 dark:bg-surface-800 rounded-lg p-4">
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
+                                    <ApperIcon name="FileText" className="h-4 w-4 text-primary" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="font-medium text-surface-900 dark:text-surface-100 text-sm">
+                                      {application.coverLetter.file.name}
+                                    </p>
+                                    <p className="text-surface-500 dark:text-surface-400 text-xs">
+                                      {formatFileSize(application.coverLetter.file.size)}
+                                    </p>
+                                  </div>
+                                  <a
+                                    href={application.coverLetter.file.url}
+                                    download={application.coverLetter.file.name}
+                                    className="p-2 text-surface-400 hover:text-primary transition-colors"
+                                    title="Download Cover Letter"
+                                  >
+                                    <ApperIcon name="Download" className="h-4 w-4" />
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Status Timeline */}
+                        {application.statusHistory && application.statusHistory.length > 1 && (
+                          <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
+                            <h5 className="text-md font-semibold text-surface-900 dark:text-surface-100 mb-3 flex items-center space-x-2">
+                              <ApperIcon name="Timeline" className="h-4 w-4" />
+                              <span>Application Timeline</span>
+                            </h5>
+                            <div className="space-y-3">
+                              {application.statusHistory.slice().reverse().map((entry, index) => (
+                                <div key={index} className="flex items-start space-x-3">
+                                  <div className={`w-2 h-2 rounded-full mt-2 ${
+                                    entry.status === 'pending' ? 'bg-yellow-500' :
+                                    entry.status === 'reviewed' ? 'bg-blue-500' :
+                                    entry.status === 'interview' ? 'bg-purple-500' :
+                                    entry.status === 'offer' ? 'bg-green-500' :
+                                    entry.status === 'hired' ? 'bg-emerald-500' :
+                                    'bg-red-500'
+                                  }`}></div>
+                                  <div className="flex-1">
+                                    <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                                      {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
+                                    </p>
+                                    <p className="text-xs text-surface-500 dark:text-surface-400">
+                                      {entry.date} • {entry.note}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
-              )}
             </div>
           </motion.div>
         )}
@@ -2098,6 +2307,183 @@ const MainFeature = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Cover Letter Modal */}
+      <AnimatePresence>
+        {showCoverLetterModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowCoverLetterModal(false)
+              }
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="glass-card rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-semibold text-surface-900 dark:text-surface-100">
+                    Complete Your Application
+                  </h3>
+                  <p className="text-surface-600 dark:text-surface-400 mt-1">
+                    Add a cover letter to strengthen your application (optional)
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowCoverLetterModal(false)}
+                  className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="h-5 w-5 text-surface-500" />
+                </button>
+              </div>
+
+              {/* Cover Letter Type Selector */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                  Cover Letter Option
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setCoverLetterType('write')}
+                    className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                      coverLetterType === 'write'
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <ApperIcon name="Edit3" className="h-6 w-6" />
+                      <span className="font-medium">Write Cover Letter</span>
+                      <span className="text-xs text-surface-500 dark:text-surface-400">Compose directly</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setCoverLetterType('upload')}
+                    className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                      coverLetterType === 'upload'
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <ApperIcon name="Upload" className="h-6 w-6" />
+                      <span className="font-medium">Upload File</span>
+                      <span className="text-xs text-surface-500 dark:text-surface-400">PDF, DOC, DOCX</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Cover Letter Content */}
+              {coverLetterType === 'write' && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    Cover Letter Content
+                  </label>
+                  <textarea
+                    value={coverLetterText}
+                    onChange={(e) => setCoverLetterText(e.target.value)}
+                    placeholder="Dear Hiring Manager,\n\nI am writing to express my strong interest in the [Position Title] role at [Company Name]. With my background in [relevant experience], I am excited about the opportunity to contribute to your team...\n\nThank you for considering my application.\n\nSincerely,\n[Your Name]"
+                    rows={12}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 resize-none"
+                  />
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-xs text-surface-500 dark:text-surface-400">
+                      {coverLetterText.length} characters
+                    </span>
+                    {coverLetterText.length > 0 && coverLetterText.length < 50 && (
+                      <span className="text-xs text-red-500">Minimum 50 characters recommended</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {coverLetterType === 'upload' && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    Upload Cover Letter
+                  </label>
+                  <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 ${
+                    coverLetterFile
+                      ? 'border-green-300 bg-green-50 dark:bg-green-900/20'
+                      : 'border-surface-300 dark:border-surface-600 hover:border-primary hover:bg-primary/5'
+                  }`}>
+                    {coverLetterFile ? (
+                      <div className="flex flex-col items-center space-y-3">
+                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                          <ApperIcon name="FileText" className="h-6 w-6 text-green-600 dark:text-green-400" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-surface-900 dark:text-surface-100">{coverLetterFile.name}</p>
+                          <p className="text-sm text-surface-500 dark:text-surface-400">{formatFileSize(coverLetterFile.size)}</p>
+                        </div>
+                        <button
+                          onClick={() => setCoverLetterFile(null)}
+                          className="text-sm text-red-600 hover:text-red-700"
+                        >
+                          Remove file
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+                          <ApperIcon name="Upload" className="h-6 w-6 text-primary" />
+                        </div>
+                        <p className="text-surface-900 dark:text-surface-100 font-medium mb-1">
+                          Drop your cover letter here, or{' '}
+                          <label className="text-primary hover:text-primary-dark cursor-pointer">
+                            browse
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx,.txt"
+                              onChange={(e) => handleCoverLetterFileUpload(e.target.files)}
+                              className="hidden"
+                            />
+                          </label>
+                        </p>
+                        <p className="text-sm text-surface-500 dark:text-surface-400">
+                          Supports: PDF, DOC, DOCX, TXT (Max 5MB)
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                <button
+                  onClick={() => setShowCoverLetterModal(false)}
+                  className="px-6 py-3 neu-button rounded-xl font-medium text-surface-700 dark:text-surface-300 hover:scale-105 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={submitApplication}
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <ApperIcon name="Send" className="h-4 w-4" />
+                    <span>Submit Application</span>
+                  </div>
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
 
     </div>
   )
