@@ -332,9 +332,13 @@ const MainFeature = () => {
           correctAnswer: 2,
           explanation: 'React 18\'s concurrent features allow rendering to be interrupted and resumed, enabling better user experience by keeping the app responsive.'
         }
-        ],
         }
-    {
+
+        ],
+      },
+
+      },
+
       id: 'javascript-advanced',
       title: 'Advanced JavaScript',
       skill: 'JavaScript',
@@ -464,7 +468,9 @@ const MainFeature = () => {
           explanation: 'The temporal dead zone is the period between entering the scope and the variable declaration where the variable cannot be accessed.'
         },
 
-    ],
+      ]
+    },
+
 
     {
       id: 'python-basics',
@@ -596,7 +602,9 @@ const MainFeature = () => {
           explanation: 'The range() function generates a sequence of numbers, commonly used for looping a specific number of times.'
         },
 
-    ],
+      ]
+    },
+
 
     {
       id: 'ux-design-principles',
@@ -727,7 +735,6 @@ const MainFeature = () => {
           correctAnswer: 1,
           explanation: 'Information architecture involves organizing and structuring content in a way that helps users find information and complete tasks.'
         },
-        }
     ]
 
   ]
