@@ -332,13 +332,9 @@ const MainFeature = () => {
           correctAnswer: 2,
           explanation: 'React 18\'s concurrent features allow rendering to be interrupted and resumed, enabling better user experience by keeping the app responsive.'
         }
-        }
-
-        ],
-      },
-
-      },
-
+      ]
+    },
+    {
       id: 'javascript-advanced',
       title: 'Advanced JavaScript',
       skill: 'JavaScript',
