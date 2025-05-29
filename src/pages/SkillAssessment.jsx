@@ -51,6 +51,138 @@ const SkillAssessment = () => {
             'A database for React applications'
           ],
           correct: 1
+        },
+        {
+          id: 4,
+          question: 'How do you pass data from a parent component to a child component?',
+          options: [
+            'Using state',
+            'Using props',
+            'Using context',
+            'Using refs'
+          ],
+          correct: 1
+        },
+        {
+          id: 5,
+          question: 'What is the purpose of the useCallback hook?',
+          options: [
+            'To memoize values',
+            'To memoize functions',
+            'To manage state',
+            'To handle side effects'
+          ],
+          correct: 1
+        },
+        {
+          id: 6,
+          question: 'Which method is used to update state in a class component?',
+          options: [
+            'updateState()',
+            'setState()',
+            'changeState()',
+            'modifyState()'
+          ],
+          correct: 1
+        },
+        {
+          id: 7,
+          question: 'What is JSX?',
+          options: [
+            'A JavaScript framework',
+            'A syntax extension for JavaScript',
+            'A CSS preprocessor',
+            'A build tool'
+          ],
+          correct: 1
+        },
+        {
+          id: 8,
+          question: 'How do you handle forms in React?',
+          options: [
+            'Using controlled components',
+            'Using uncontrolled components',
+            'Both controlled and uncontrolled components',
+            'React cannot handle forms'
+          ],
+          correct: 2
+        },
+        {
+          id: 9,
+          question: 'What is the purpose of React.memo()?',
+          options: [
+            'To memoize component state',
+            'To prevent unnecessary re-renders',
+            'To handle side effects',
+            'To manage component lifecycle'
+          ],
+          correct: 1
+        },
+        {
+          id: 10,
+          question: 'Which hook is used for managing complex state logic?',
+          options: [
+            'useState',
+            'useEffect',
+            'useReducer',
+            'useContext'
+          ],
+          correct: 2
+        },
+        {
+          id: 11,
+          question: 'What is the Context API used for?',
+          options: [
+            'State management across components',
+            'Routing between pages',
+            'Styling components',
+            'Handling API calls'
+          ],
+          correct: 0
+        },
+        {
+          id: 12,
+          question: 'How do you optimize React application performance?',
+          options: [
+            'Using React.memo and useMemo',
+            'Code splitting with React.lazy',
+            'Avoiding unnecessary re-renders',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 13,
+          question: 'What is the difference between useEffect and useLayoutEffect?',
+          options: [
+            'No difference',
+            'useLayoutEffect runs synchronously after DOM mutations',
+            'useEffect is deprecated',
+            'useLayoutEffect is for styling only'
+          ],
+          correct: 1
+        },
+        {
+          id: 14,
+          question: 'How do you handle errors in React components?',
+          options: [
+            'Try-catch blocks',
+            'Error boundaries',
+            'Global error handlers',
+            'React handles errors automatically'
+          ],
+          correct: 1
+        },
+        {
+          id: 15,
+          question: 'What is the purpose of keys in React lists?',
+          options: [
+            'For styling list items',
+            'To help React identify which items have changed',
+            'For accessibility',
+            'Keys are not important'
+          ],
+          correct: 1
         }
       ]
     },
@@ -74,6 +206,127 @@ const SkillAssessment = () => {
             'let is faster than var'
           ],
           correct: 1
+        },
+        {
+          id: 2,
+          question: 'Which of the following is not a primitive data type in JavaScript?',
+          options: [
+            'string',
+            'number',
+            'object',
+            'boolean'
+          ],
+          correct: 2
+        },
+        {
+          id: 3,
+          question: 'What does the === operator do?',
+          options: [
+            'Assigns a value',
+            'Compares values only',
+            'Compares values and types',
+            'Logical AND operation'
+          ],
+          correct: 2
+        },
+        {
+          id: 4,
+          question: 'How do you create a function in JavaScript?',
+          options: [
+            'function myFunc() {}',
+            'const myFunc = () => {}',
+            'const myFunc = function() {}',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 5,
+          question: 'What is closure in JavaScript?',
+          options: [
+            'A way to close the browser',
+            'A function that has access to outer scope variables',
+            'A method to end a loop',
+            'A type of error'
+          ],
+          correct: 1
+        },
+        {
+          id: 6,
+          question: 'Which method adds an element to the end of an array?',
+          options: [
+            'push()',
+            'pop()',
+            'shift()',
+            'unshift()'
+          ],
+          correct: 0
+        },
+        {
+          id: 7,
+          question: 'What is the purpose of JSON.stringify()?',
+          options: [
+            'To parse JSON',
+            'To convert JavaScript object to JSON string',
+            'To validate JSON',
+            'To format JSON'
+          ],
+          correct: 1
+        },
+        {
+          id: 8,
+          question: 'How do you handle asynchronous operations in JavaScript?',
+          options: [
+            'Callbacks',
+            'Promises',
+            'Async/await',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 9,
+          question: 'What is the difference between null and undefined?',
+          options: [
+            'No difference',
+            'null is assigned, undefined means not assigned',
+            'undefined is assigned, null means not assigned',
+            'Both are the same as false'
+          ],
+          correct: 1
+        },
+        {
+          id: 10,
+          question: 'Which ES6 feature allows you to extract values from arrays or objects?',
+          options: [
+            'Destructuring',
+            'Spread operator',
+            'Template literals',
+            'Arrow functions'
+          ],
+          correct: 0
+        },
+        {
+          id: 11,
+          question: 'What is the purpose of the map() method?',
+          options: [
+            'To filter array elements',
+            'To create a new array with transformed elements',
+            'To find an element in array',
+            'To sort array elements'
+          ],
+          correct: 1
+        },
+        {
+          id: 12,
+          question: 'How do you check if a variable is an array?',
+          options: [
+            'typeof variable === "array"',
+            'Array.isArray(variable)',
+            'variable instanceof Array',
+            'Both b and c'
+          ],
+          correct: 3
         }
       ]
     },
@@ -86,7 +339,206 @@ const SkillAssessment = () => {
       difficulty: 'Advanced',
       icon: '🐍',
       category: 'Programming',
-      questions_data: []
+      questions_data: [
+        {
+          id: 1,
+          question: 'Which of the following is the correct way to define a list in Python?',
+          options: [
+            'list = []',
+            'list = {}',
+            'list = ()',
+            'list = ""'
+          ],
+          correct: 0
+        },
+        {
+          id: 2,
+          question: 'What is the output of print(type([]))?',
+          options: [
+            '<class "list">',
+            '<class "array">',
+            '<class "tuple">',
+            '<class "dict">'
+          ],
+          correct: 0
+        },
+        {
+          id: 3,
+          question: 'Which keyword is used to define a function in Python?',
+          options: [
+            'function',
+            'def',
+            'func',
+            'define'
+          ],
+          correct: 1
+        },
+        {
+          id: 4,
+          question: 'What is the purpose of the __init__ method?',
+          options: [
+            'To initialize class variables',
+            'To delete an object',
+            'To inherit from parent class',
+            'To import modules'
+          ],
+          correct: 0
+        },
+        {
+          id: 5,
+          question: 'Which data structure is used to store key-value pairs in Python?',
+          options: [
+            'List',
+            'Tuple',
+            'Dictionary',
+            'Set'
+          ],
+          correct: 2
+        },
+        {
+          id: 6,
+          question: 'What is list comprehension in Python?',
+          options: [
+            'A way to understand lists',
+            'A concise way to create lists',
+            'A method to compress lists',
+            'A type of loop'
+          ],
+          correct: 1
+        },
+        {
+          id: 7,
+          question: 'Which of the following is used for exception handling in Python?',
+          options: [
+            'try-catch',
+            'try-except',
+            'catch-throw',
+            'handle-error'
+          ],
+          correct: 1
+        },
+        {
+          id: 8,
+          question: 'What is the difference between append() and extend() methods?',
+          options: [
+            'No difference',
+            'append() adds single element, extend() adds multiple elements',
+            'extend() adds single element, append() adds multiple elements',
+            'Both do the same thing'
+          ],
+          correct: 1
+        },
+        {
+          id: 9,
+          question: 'Which library is commonly used for data manipulation in Python?',
+          options: [
+            'NumPy',
+            'Pandas',
+            'Matplotlib',
+            'Requests'
+          ],
+          correct: 1
+        },
+        {
+          id: 10,
+          question: 'What is the time complexity of accessing an element in a dictionary?',
+          options: [
+            'O(1) average case',
+            'O(n)',
+            'O(log n)',
+            'O(n²)'
+          ],
+          correct: 0
+        },
+        {
+          id: 11,
+          question: 'Which method is used to remove and return an element from a list?',
+          options: [
+            'remove()',
+            'delete()',
+            'pop()',
+            'clear()'
+          ],
+          correct: 2
+        },
+        {
+          id: 12,
+          question: 'What is a lambda function in Python?',
+          options: [
+            'A named function',
+            'An anonymous function',
+            'A recursive function',
+            'A built-in function'
+          ],
+          correct: 1
+        },
+        {
+          id: 13,
+          question: 'Which decorator is used to define a static method?',
+          options: [
+            '@staticmethod',
+            '@classmethod',
+            '@property',
+            '@static'
+          ],
+          correct: 0
+        },
+        {
+          id: 14,
+          question: 'What is the purpose of the yield keyword?',
+          options: [
+            'To return a value from function',
+            'To create a generator',
+            'To pause execution',
+            'To handle exceptions'
+          ],
+          correct: 1
+        },
+        {
+          id: 15,
+          question: 'Which of the following is immutable in Python?',
+          options: [
+            'List',
+            'Dictionary',
+            'Tuple',
+            'Set'
+          ],
+          correct: 2
+        },
+        {
+          id: 16,
+          question: 'What is the Global Interpreter Lock (GIL)?',
+          options: [
+            'A security feature',
+            'A mechanism that prevents multiple threads from executing Python code simultaneously',
+            'A type of variable',
+            'A debugging tool'
+          ],
+          correct: 1
+        },
+        {
+          id: 17,
+          question: 'Which method is used to sort a list in-place?',
+          options: [
+            'sorted()',
+            'sort()',
+            'order()',
+            'arrange()'
+          ],
+          correct: 1
+        },
+        {
+          id: 18,
+          question: 'What is the difference between is and == operators?',
+          options: [
+            'No difference',
+            'is checks identity, == checks equality',
+            '== checks identity, is checks equality',
+            'Both are deprecated'
+          ],
+          correct: 1
+        }
+      ]
     },
     {
       id: 4,
@@ -97,7 +549,228 @@ const SkillAssessment = () => {
       difficulty: 'Intermediate',
       icon: '📊',
       category: 'Data Science',
-      questions_data: []
+      questions_data: [
+        {
+          id: 1,
+          question: 'What is the primary purpose of data analysis?',
+          options: [
+            'To collect data',
+            'To extract insights and patterns from data',
+            'To store data',
+            'To delete unnecessary data'
+          ],
+          correct: 1
+        },
+        {
+          id: 2,
+          question: 'Which of the following is a measure of central tendency?',
+          options: [
+            'Standard deviation',
+            'Variance',
+            'Mean',
+            'Range'
+          ],
+          correct: 2
+        },
+        {
+          id: 3,
+          question: 'What does SQL stand for?',
+          options: [
+            'Structured Query Language',
+            'Standard Query Language',
+            'Simple Query Language',
+            'Sequential Query Language'
+          ],
+          correct: 0
+        },
+        {
+          id: 4,
+          question: 'Which visualization is best for showing correlation between two variables?',
+          options: [
+            'Bar chart',
+            'Pie chart',
+            'Scatter plot',
+            'Line chart'
+          ],
+          correct: 2
+        },
+        {
+          id: 5,
+          question: 'What is the difference between population and sample?',
+          options: [
+            'No difference',
+            'Population is entire group, sample is subset',
+            'Sample is entire group, population is subset',
+            'Both terms mean the same thing'
+          ],
+          correct: 1
+        },
+        {
+          id: 6,
+          question: 'Which Python library is primarily used for data visualization?',
+          options: [
+            'NumPy',
+            'Pandas',
+            'Matplotlib',
+            'Scikit-learn'
+          ],
+          correct: 2
+        },
+        {
+          id: 7,
+          question: 'What is the purpose of data cleaning?',
+          options: [
+            'To delete all data',
+            'To remove errors and inconsistencies',
+            'To compress data',
+            'To backup data'
+          ],
+          correct: 1
+        },
+        {
+          id: 8,
+          question: 'Which statistical test is used to compare means of two groups?',
+          options: [
+            'Chi-square test',
+            'T-test',
+            'ANOVA',
+            'Regression analysis'
+          ],
+          correct: 1
+        },
+        {
+          id: 9,
+          question: 'What is the purpose of normalization in data analysis?',
+          options: [
+            'To make data normal distribution',
+            'To scale data to a common range',
+            'To remove outliers',
+            'To sort data'
+          ],
+          correct: 1
+        },
+        {
+          id: 10,
+          question: 'Which of the following is an example of categorical data?',
+          options: [
+            'Age',
+            'Height',
+            'Gender',
+            'Temperature'
+          ],
+          correct: 2
+        },
+        {
+          id: 11,
+          question: 'What is the interquartile range (IQR)?',
+          options: [
+            'The range between Q1 and Q3',
+            'The range between minimum and maximum',
+            'The range around the mean',
+            'The range of all quartiles'
+          ],
+          correct: 0
+        },
+        {
+          id: 12,
+          question: 'Which type of analysis is used to predict future values?',
+          options: [
+            'Descriptive analysis',
+            'Predictive analysis',
+            'Prescriptive analysis',
+            'Diagnostic analysis'
+          ],
+          correct: 1
+        },
+        {
+          id: 13,
+          question: 'What is the purpose of hypothesis testing?',
+          options: [
+            'To create hypotheses',
+            'To test statistical significance of findings',
+            'To generate random data',
+            'To clean data'
+          ],
+          correct: 1
+        },
+        {
+          id: 14,
+          question: 'Which measure indicates the spread of data?',
+          options: [
+            'Mean',
+            'Median',
+            'Mode',
+            'Standard deviation'
+          ],
+          correct: 3
+        },
+        {
+          id: 15,
+          question: 'What is big data characterized by?',
+          options: [
+            'Volume only',
+            'Velocity only',
+            'Variety only',
+            'Volume, Velocity, and Variety'
+          ],
+          correct: 3
+        },
+        {
+          id: 16,
+          question: 'Which technique is used to reduce dimensionality?',
+          options: [
+            'Principal Component Analysis (PCA)',
+            'Linear regression',
+            'Clustering',
+            'Classification'
+          ],
+          correct: 0
+        },
+        {
+          id: 17,
+          question: 'What is the purpose of A/B testing?',
+          options: [
+            'To test two different versions',
+            'To sort data alphabetically',
+            'To clean data',
+            'To visualize data'
+          ],
+          correct: 0
+        },
+        {
+          id: 18,
+          question: 'Which of the following is a time series analysis component?',
+          options: [
+            'Trend',
+            'Seasonality',
+            'Noise',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 19,
+          question: 'What is the difference between correlation and causation?',
+          options: [
+            'No difference',
+            'Correlation implies relationship, causation implies cause-effect',
+            'Causation implies relationship, correlation implies cause-effect',
+            'Both are the same'
+          ],
+          correct: 1
+        },
+        {
+          id: 20,
+          question: 'Which tool is commonly used for business intelligence and reporting?',
+          options: [
+            'Tableau',
+            'Power BI',
+            'QlikView',
+            'All of the above'
+          ],
+          correct: 3
+        }
+      ]
     },
     {
       id: 5,
@@ -108,7 +781,118 @@ const SkillAssessment = () => {
       difficulty: 'Beginner',
       icon: '🎨',
       category: 'Design',
-      questions_data: []
+      questions_data: [
+        {
+          id: 1,
+          question: 'What does UX stand for?',
+          options: [
+            'User Experience',
+            'User Excellence',
+            'Universal Experience',
+            'Unified Experience'
+          ],
+          correct: 0
+        },
+        {
+          id: 2,
+          question: 'Which principle focuses on making interfaces easy to understand?',
+          options: [
+            'Consistency',
+            'Clarity',
+            'Feedback',
+            'Efficiency'
+          ],
+          correct: 1
+        },
+        {
+          id: 3,
+          question: 'What is the purpose of a wireframe?',
+          options: [
+            'To add colors to design',
+            'To show the basic structure and layout',
+            'To write code',
+            'To test functionality'
+          ],
+          correct: 1
+        },
+        {
+          id: 4,
+          question: 'Which color combination provides the best accessibility?',
+          options: [
+            'Red text on green background',
+            'Yellow text on white background',
+            'Black text on white background',
+            'Blue text on purple background'
+          ],
+          correct: 2
+        },
+        {
+          id: 5,
+          question: 'What is the ideal number of primary navigation items?',
+          options: [
+            '3-5 items',
+            '5-7 items',
+            '7-9 items',
+            '10+ items'
+          ],
+          correct: 1
+        },
+        {
+          id: 6,
+          question: 'Which design principle suggests that similar elements should look similar?',
+          options: [
+            'Proximity',
+            'Alignment',
+            'Consistency',
+            'Contrast'
+          ],
+          correct: 2
+        },
+        {
+          id: 7,
+          question: 'What is the purpose of user personas?',
+          options: [
+            'To decorate the design',
+            'To represent target users',
+            'To add complexity',
+            'To increase development time'
+          ],
+          correct: 1
+        },
+        {
+          id: 8,
+          question: 'Which method is used to test usability with real users?',
+          options: [
+            'A/B testing',
+            'User testing',
+            'Code review',
+            'Design review'
+          ],
+          correct: 1
+        },
+        {
+          id: 9,
+          question: 'What is the golden ratio in design?',
+          options: [
+            '1:1',
+            '1:1.618',
+            '1:2',
+            '2:3'
+          ],
+          correct: 1
+        },
+        {
+          id: 10,
+          question: 'Which typography principle improves readability?',
+          options: [
+            'Using many different fonts',
+            'Making all text the same size',
+            'Appropriate line spacing and font size',
+            'Using only decorative fonts'
+          ],
+          correct: 2
+        }
+      ]
     },
     {
       id: 6,
@@ -119,7 +903,173 @@ const SkillAssessment = () => {
       difficulty: 'Intermediate',
       icon: '🟢',
       category: 'Backend',
-      questions_data: []
+      questions_data: [
+        {
+          id: 1,
+          question: 'What is Node.js?',
+          options: [
+            'A frontend framework',
+            'A JavaScript runtime built on Chrome\'s V8 engine',
+            'A database',
+            'A web browser'
+          ],
+          correct: 1
+        },
+        {
+          id: 2,
+          question: 'Which of the following is the package manager for Node.js?',
+          options: [
+            'npm',
+            'pip',
+            'gem',
+            'composer'
+          ],
+          correct: 0
+        },
+        {
+          id: 3,
+          question: 'How do you import a module in Node.js?',
+          options: [
+            'import module from "module"',
+            'require("module")',
+            'include "module"',
+            'load("module")'
+          ],
+          correct: 1
+        },
+        {
+          id: 4,
+          question: 'Which method is used to create an HTTP server in Node.js?',
+          options: [
+            'http.createServer()',
+            'http.newServer()',
+            'http.makeServer()',
+            'http.buildServer()'
+          ],
+          correct: 0
+        },
+        {
+          id: 5,
+          question: 'What is Express.js?',
+          options: [
+            'A database',
+            'A web application framework for Node.js',
+            'A frontend library',
+            'A testing framework'
+          ],
+          correct: 1
+        },
+        {
+          id: 6,
+          question: 'Which of the following is used for handling asynchronous operations?',
+          options: [
+            'Callbacks',
+            'Promises',
+            'Async/await',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 7,
+          question: 'What is middleware in Express.js?',
+          options: [
+            'A database connection',
+            'Functions that execute during request-response cycle',
+            'A testing tool',
+            'A deployment service'
+          ],
+          correct: 1
+        },
+        {
+          id: 8,
+          question: 'Which status code indicates a successful HTTP request?',
+          options: [
+            '404',
+            '500',
+            '200',
+            '301'
+          ],
+          correct: 2
+        },
+        {
+          id: 9,
+          question: 'How do you handle environment variables in Node.js?',
+          options: [
+            'process.env',
+            'env.get()',
+            'system.env',
+            'config.env'
+          ],
+          correct: 0
+        },
+        {
+          id: 10,
+          question: 'Which database is commonly used with Node.js?',
+          options: [
+            'MongoDB',
+            'PostgreSQL',
+            'MySQL',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 11,
+          question: 'What is the purpose of the package.json file?',
+          options: [
+            'To store project metadata and dependencies',
+            'To configure the database',
+            'To handle routing',
+            'To manage user sessions'
+          ],
+          correct: 0
+        },
+        {
+          id: 12,
+          question: 'Which method is used to handle POST requests in Express?',
+          options: [
+            'app.post()',
+            'app.get()',
+            'app.put()',
+            'app.delete()'
+          ],
+          correct: 0
+        },
+        {
+          id: 13,
+          question: 'What is JWT used for?',
+          options: [
+            'Database queries',
+            'Authentication and authorization',
+            'File uploads',
+            'Email sending'
+          ],
+          correct: 1
+        },
+        {
+          id: 14,
+          question: 'Which tool is commonly used for API testing?',
+          options: [
+            'Postman',
+            'Insomnia',
+            'Thunder Client',
+            'All of the above'
+          ],
+          correct: 3
+        },
+        {
+          id: 15,
+          question: 'What is the event loop in Node.js?',
+          options: [
+            'A debugging tool',
+            'A mechanism that handles asynchronous operations',
+            'A database connection pool',
+            'A server configuration'
+          ],
+          correct: 1
+        }
+      ]
     }
   ]
 
