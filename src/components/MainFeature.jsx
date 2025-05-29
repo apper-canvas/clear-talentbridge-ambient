@@ -20,10 +20,24 @@ const MainFeature = () => {
     preferredJobType: '',
     skills: [],
     about: '',
-    documents: []
+    documents: [],
+    skillAssessments: [],
+    certificates: []
   })
+
   const [newSkill, setNewSkill] = useState('')
   const [dragActive, setDragActive] = useState(false)
+  
+  // Skill Assessment State
+  const [selectedAssessment, setSelectedAssessment] = useState(null)
+  const [currentQuiz, setCurrentQuiz] = useState(null)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [selectedAnswers, setSelectedAnswers] = useState({})
+  const [quizResults, setQuizResults] = useState(null)
+  const [showQuizResults, setShowQuizResults] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState(0)
+  const [quizTimer, setQuizTimer] = useState(null)
+
 
   const [selectedJob, setSelectedJob] = useState(null)
 
@@ -177,10 +191,240 @@ const MainFeature = () => {
         website: 'https://aidynamics.com'
       }
     }
+  // Skill Assessment Data
+  const skillAssessments = [
+    {
+      id: 'react-fundamentals',
+      title: 'React Fundamentals',
+      skill: 'React',
+      difficulty: 'Intermediate',
+      duration: 30, // minutes
+      passingScore: 70,
+      description: 'Test your knowledge of React components, hooks, and state management.',
+      questions: [
+        {
+          id: 1,
+          question: 'What is the correct way to update state in a functional component?',
+          options: [
+            'this.setState({count: count + 1})',
+            'setState({count: count + 1})',
+            'setCount(count + 1)',
+            'updateState({count: count + 1})'
+          ],
+          correctAnswer: 2,
+          explanation: 'In functional components, you use the setter function returned by useState hook.'
+        },
+        {
+          id: 2,
+          question: 'Which hook is used for side effects in React?',
+          options: [
+            'useState',
+            'useEffect',
+            'useContext',
+            'useMemo'
+          ],
+          correctAnswer: 1,
+          explanation: 'useEffect is the hook used for handling side effects like API calls, subscriptions, etc.'
+        },
+        {
+          id: 3,
+          question: 'What is the purpose of React.memo()?',
+          options: [
+            'To memorize component state',
+            'To prevent unnecessary re-renders',
+            'To create memory leaks',
+            'To store data in memory'
+          ],
+          correctAnswer: 1,
+          explanation: 'React.memo() is used to prevent unnecessary re-renders by memoizing the component.'
+        },
+        {
+          id: 4,
+          question: 'How do you pass data from parent to child component?',
+          options: [
+            'Using state',
+            'Using props',
+            'Using context',
+            'Using refs'
+          ],
+          correctAnswer: 1,
+          explanation: 'Props are used to pass data from parent components to child components.'
+        },
+        {
+          id: 5,
+          question: 'What is the correct way to handle events in React?',
+          options: [
+            'onclick="handleClick()"',
+            'onClick={handleClick()}',
+            'onClick={handleClick}',
+            'onCick="{handleClick}"'
+          ],
+          correctAnswer: 2,
+          explanation: 'Event handlers in React are passed as functions without calling them immediately.'
+        }
+      ]
+    },
+    {
+      id: 'javascript-advanced',
+      title: 'Advanced JavaScript',
+      skill: 'JavaScript',
+      difficulty: 'Advanced',
+      duration: 45,
+      passingScore: 75,
+      description: 'Advanced JavaScript concepts including closures, prototypes, and async programming.',
+      questions: [
+        {
+          id: 1,
+          question: 'What is a closure in JavaScript?',
+          options: [
+            'A function that returns another function',
+            'A function that has access to variables from outer scope',
+            'A function that is immediately executed',
+            'A function that accepts no parameters'
+          ],
+          correctAnswer: 1,
+          explanation: 'A closure is a function that has access to variables from its outer (enclosing) scope.'
+        },
+        {
+          id: 2,
+          question: 'What does Promise.all() do?',
+          options: [
+            'Executes promises sequentially',
+            'Executes promises in parallel and waits for all to resolve',
+            'Executes only the first promise',
+            'Cancels all promises'
+          ],
+          correctAnswer: 1,
+          explanation: 'Promise.all() executes promises in parallel and resolves when all promises resolve.'
+        },
+        {
+          id: 3,
+          question: 'What is the difference between let and var?',
+          options: [
+            'No difference',
+            'let has block scope, var has function scope',
+            'var has block scope, let has function scope',
+            'let is faster than var'
+          ],
+          correctAnswer: 1,
+          explanation: 'let has block scope while var has function scope, and let prevents hoisting issues.'
+        }
+      ]
+    },
+    {
+      id: 'python-basics',
+      title: 'Python Programming',
+      skill: 'Python',
+      difficulty: 'Beginner',
+      duration: 25,
+      passingScore: 65,
+      description: 'Basic Python programming concepts and syntax.',
+      questions: [
+        {
+          id: 1,
+          question: 'How do you create a list in Python?',
+          options: [
+            'list = (1, 2, 3)',
+            'list = [1, 2, 3]',
+            'list = {1, 2, 3}',
+            'list = <1, 2, 3>'
+          ],
+          correctAnswer: 1,
+          explanation: 'Lists in Python are created using square brackets [].'
+        },
+        {
+          id: 2,
+          question: 'What is the correct way to define a function in Python?',
+          options: [
+            'function myFunc():',
+            'def myFunc():',
+            'func myFunc():',
+            'define myFunc():'
+          ],
+          correctAnswer: 1,
+          explanation: 'Functions in Python are defined using the def keyword.'
+        }
+      ]
+    },
+    {
+      id: 'ux-design-principles',
+      title: 'UX Design Principles',
+      skill: 'UX Design',
+      difficulty: 'Intermediate',
+      duration: 35,
+      passingScore: 70,
+      description: 'Fundamental UX design principles and best practices.',
+      questions: [
+        {
+          id: 1,
+          question: 'What is the primary goal of user experience design?',
+          options: [
+            'Make the interface look beautiful',
+            'Create meaningful and relevant experiences for users',
+            'Add as many features as possible',
+            'Follow the latest design trends'
+          ],
+          correctAnswer: 1,
+          explanation: 'UX design focuses on creating meaningful, relevant, and usable experiences for users.'
+        },
+        {
+          id: 2,
+          question: 'What is a user persona?',
+          options: [
+            'A real user of the product',
+            'A fictional character representing user segments',
+            'A design pattern',
+            'A testing methodology'
+          ],
+          correctAnswer: 1,
+          explanation: 'A user persona is a fictional character that represents a segment of your target audience.'
+        }
+      ]
+    }
   ]
 
 
+
   const [filteredJobs, setFilteredJobs] = useState(mockJobs)
+
+  // Enhanced job search with skill assessment integration
+  const getSkillMatchScore = (jobSkills, userProfile) => {
+    if (!jobSkills || !userProfile.skills) return 0
+    
+    let totalScore = 0
+    let verifiedSkills = 0
+    
+    jobSkills.forEach(skill => {
+      if (userProfile.skills.includes(skill)) {
+        // Check if skill is verified through assessment
+        const certificate = userProfile.certificates.find(cert => 
+          cert.skill.toLowerCase() === skill.toLowerCase()
+        )
+        
+        if (certificate) {
+          // Verified skill gets higher score based on proficiency
+          const proficiencyMultiplier = {
+            'Expert': 1.0,
+            'Advanced': 0.9,
+            'Intermediate': 0.8,
+            'Beginner': 0.7
+          }
+          totalScore += (proficiencyMultiplier[certificate.proficiencyLevel] || 0.7)
+          verifiedSkills++
+        } else {
+          // Unverified skill gets lower score
+          totalScore += 0.5
+        }
+      }
+    })
+    
+    return {
+      score: totalScore / jobSkills.length,
+      verifiedSkills,
+      totalSkills: jobSkills.length
+    }
+  }
+
 
   const handleSearch = () => {
     let filtered = mockJobs
@@ -203,9 +447,31 @@ const MainFeature = () => {
       filtered = filtered.filter(job => job.type === jobType)
     }
 
+    // Enhanced sorting with skill assessment scores
+    if (profile.skills.length > 0 || profile.certificates.length > 0) {
+      filtered = filtered.map(job => {
+        const matchData = getSkillMatchScore(job.skills, profile)
+        return {
+          ...job,
+          skillMatchScore: matchData.score,
+          verifiedSkillsCount: matchData.verifiedSkills,
+          skillMatchPercentage: Math.round(matchData.score * 100)
+        }
+      })
+      
+      // Sort by skill match score (verified skills first)
+      filtered.sort((a, b) => {
+        if (b.skillMatchScore !== a.skillMatchScore) {
+          return b.skillMatchScore - a.skillMatchScore
+        }
+        return b.verifiedSkillsCount - a.verifiedSkillsCount
+      })
+    }
+
     setFilteredJobs(filtered)
     toast.success(`Found ${filtered.length} job${filtered.length !== 1 ? 's' : ''} matching your criteria`)
   }
+
 
   const handleApply = (jobId) => {
     const job = mockJobs.find(j => j.id === jobId)
@@ -277,13 +543,151 @@ const MainFeature = () => {
     }
   }
 
+  // Skill Assessment Functions
+  const startAssessment = (assessment) => {
+    setSelectedAssessment(assessment)
+    setCurrentQuiz(assessment)
+    setCurrentQuestionIndex(0)
+    setSelectedAnswers({})
+    setQuizResults(null)
+    setShowQuizResults(false)
+    setTimeRemaining(assessment.duration * 60) // Convert to seconds
+    
+    // Start timer
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          submitQuiz()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    
+    setQuizTimer(timer)
+    toast.info(`Assessment started! You have ${assessment.duration} minutes to complete.`)
+  }
+
+  const selectAnswer = (questionId, answerIndex) => {
+    setSelectedAnswers(prev => ({
+      ...prev,
+      [questionId]: answerIndex
+    }))
+  }
+
+  const nextQuestion = () => {
+    if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1)
+    }
+  }
+
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1)
+    }
+  }
+
+  const submitQuiz = () => {
+    if (quizTimer) {
+      clearInterval(quizTimer)
+      setQuizTimer(null)
+    }
+
+    const questions = currentQuiz.questions
+    let correctAnswers = 0
+    
+    const detailedResults = questions.map(question => {
+      const userAnswer = selectedAnswers[question.id]
+      const isCorrect = userAnswer === question.correctAnswer
+      if (isCorrect) correctAnswers++
+      
+      return {
+        questionId: question.id,
+        question: question.question,
+        userAnswer,
+        correctAnswer: question.correctAnswer,
+        isCorrect,
+        explanation: question.explanation,
+        options: question.options
+      }
+    })
+    
+    const score = Math.round((correctAnswers / questions.length) * 100)
+    const passed = score >= currentQuiz.passingScore
+    
+    const results = {
+      assessmentId: currentQuiz.id,
+      skill: currentQuiz.skill,
+      score,
+      correctAnswers,
+      totalQuestions: questions.length,
+      passed,
+      timeTaken: (currentQuiz.duration * 60) - timeRemaining,
+      completedAt: new Date().toLocaleDateString(),
+      detailedResults
+    }
+    
+    setQuizResults(results)
+    setShowQuizResults(true)
+    
+    // Add to skill assessments
+    setProfile(prev => ({
+      ...prev,
+      skillAssessments: [...prev.skillAssessments.filter(a => a.assessmentId !== currentQuiz.id), results]
+    }))
+    
+    // Generate certificate if passed
+    if (passed) {
+      const proficiencyLevel = score >= 90 ? 'Expert' : score >= 80 ? 'Advanced' : score >= 70 ? 'Intermediate' : 'Beginner'
+      
+      const certificate = {
+        id: Date.now(),
+        skill: currentQuiz.skill,
+        assessmentTitle: currentQuiz.title,
+        score,
+        proficiencyLevel,
+        earnedAt: new Date().toLocaleDateString(),
+        certificateId: `CERT-${currentQuiz.skill.toUpperCase()}-${Date.now()}`
+      }
+      
+      setProfile(prev => ({
+        ...prev,
+        certificates: [...prev.certificates.filter(c => c.skill !== currentQuiz.skill), certificate]
+      }))
+      
+      toast.success(`🎉 Congratulations! You earned a ${proficiencyLevel} certificate in ${currentQuiz.skill}!`)
+    } else {
+      toast.info(`Assessment completed. Score: ${score}%. You need ${currentQuiz.passingScore}% to pass.`)
+    }
+  }
+
+  const retakeAssessment = () => {
+    setShowQuizResults(false)
+    setCurrentQuiz(null)
+    setSelectedAssessment(null)
+    setCurrentQuestionIndex(0)
+    setSelectedAnswers({})
+    setQuizResults(null)
+    setTimeRemaining(0)
+  }
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+  }
+
+
 
   const tabs = [
     { id: 'search', label: 'Find Jobs', icon: 'Search' },
     { id: 'post', label: 'Post Job', icon: 'Plus' },
     { id: 'applications', label: 'My Applications', icon: 'FileText' },
+    { id: 'assessments', label: 'Skill Assessments', icon: 'Award' },
     { id: 'profile', label: 'My Profile', icon: 'User' }
   ]
+
 
   const handleProfileSave = () => {
     if (!profile.firstName || !profile.lastName || !profile.email) {
@@ -570,6 +974,18 @@ const MainFeature = () => {
                             <span>{job.postedAt}</span>
                           </div>
                         </div>
+                        {job.skillMatchScore && (
+                          <div className="flex items-center space-x-1 text-xs">
+                            <ApperIcon name="Target" className="h-3 w-3" />
+                            <span className="text-green-600 dark:text-green-400 font-medium">
+                              {job.skillMatchPercentage}% skill match
+                            </span>
+                            {job.verifiedSkillsCount > 0 && (
+                              <span className="text-blue-600 dark:text-blue-400">| {job.verifiedSkillsCount} verified</span>
+                            )}
+                          </div>
+                        )}
+
                         {job.skills && job.skills.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {job.skills.map((skill, index) => (
@@ -793,7 +1209,394 @@ const MainFeature = () => {
               )}
             </div>
           </motion.div>
+        {/* Skill Assessments Tab */}
+        {activeTab === 'assessments' && (
+          <motion.div
+            key="assessments"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="space-y-6">
+              {!currentQuiz && !showQuizResults && (
+                <>
+                  {/* Assessment Overview */}
+                  <div className="glass-card rounded-2xl p-6">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                          Skill Assessments
+                        </h3>
+                        <p className="text-surface-600 dark:text-surface-400 mt-2">
+                          Verify your skills and improve your job matching with certified assessments
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-surface-500 dark:text-surface-400">Completed</div>
+                        <div className="text-2xl font-bold text-primary">{profile.certificates.length}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Certificates Display */}
+                    {profile.certificates.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="text-lg font-semibold mb-3 text-surface-900 dark:text-surface-100">
+                          Your Certificates
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {profile.certificates.map((cert) => (
+                            <div key={cert.id} className="certificate-card">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <ApperIcon name="Award" className="h-5 w-5 text-yellow-600" />
+                                  <span className="font-semibold text-surface-900 dark:text-surface-100">
+                                    {cert.skill}
+                                  </span>
+                                </div>
+                                <span className={`skill-badge ${
+                                  cert.proficiencyLevel === 'Expert' ? 'bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 text-purple-700 dark:text-purple-400' :
+                                  cert.proficiencyLevel === 'Advanced' ? 'bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-700 dark:text-blue-400' :
+                                  cert.proficiencyLevel === 'Intermediate' ? 'bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 text-green-700 dark:text-green-400' :
+                                  'bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 text-yellow-700 dark:text-yellow-400'
+                                }`}>
+                                  {cert.proficiencyLevel}
+                                </span>
+                              </div>
+                              <div className="text-sm text-surface-600 dark:text-surface-400">
+                                Score: {cert.score}% • Earned {cert.earnedAt}
+                              </div>
+                              <div className="text-xs text-surface-500 dark:text-surface-500 mt-1">
+                                Certificate ID: {cert.certificateId}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Available Assessments */}
+                  <div className="glass-card rounded-2xl p-6">
+                    <h4 className="text-xl font-semibold mb-6 text-surface-900 dark:text-surface-100">
+                      Available Assessments
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {skillAssessments.map((assessment) => {
+                        const isCompleted = profile.skillAssessments.some(a => a.assessmentId === assessment.id)
+                        const lastAttempt = profile.skillAssessments.find(a => a.assessmentId === assessment.id)
+                        const hasCertificate = profile.certificates.some(c => c.skill === assessment.skill)
+                        
+                        return (
+                          <div key={assessment.id} className="assessment-card">
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <h5 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-1">
+                                  {assessment.title}
+                                </h5>
+                                <div className="flex items-center space-x-4 text-sm text-surface-600 dark:text-surface-400">
+                                  <span className="flex items-center space-x-1">
+                                    <ApperIcon name="Clock" className="h-4 w-4" />
+                                    <span>{assessment.duration} min</span>
+                                  </span>
+                                  <span className="flex items-center space-x-1">
+                                    <ApperIcon name="Target" className="h-4 w-4" />
+                                    <span>{assessment.difficulty}</span>
+                                  </span>
+                                  <span className="flex items-center space-x-1">
+                                    <ApperIcon name="CheckCircle" className="h-4 w-4" />
+                                    <span>{assessment.passingScore}% to pass</span>
+                                  </span>
+                                </div>
+                              </div>
+                              {hasCertificate && (
+                                <div className="skill-badge">
+                                  <ApperIcon name="Award" className="h-4 w-4" />
+                                  Certified
+                                </div>
+                              )}
+                            </div>
+                            
+                            <p className="text-surface-700 dark:text-surface-300 mb-4 text-sm">
+                              {assessment.description}
+                            </p>
+                            
+                            {isCompleted && (
+                              <div className="mb-4 p-3 bg-surface-50 dark:bg-surface-800 rounded-lg">
+                                <div className="flex items-center justify-between text-sm">
+                                  <span className="text-surface-600 dark:text-surface-400">Last Score:</span>
+                                  <span className={`font-medium ${
+                                    lastAttempt.passed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                                  }`}>
+                                    {lastAttempt.score}% ({lastAttempt.passed ? 'Passed' : 'Failed'})
+                                  </span>
+                                </div>
+                                <div className="text-xs text-surface-500 dark:text-surface-500 mt-1">
+                                  Completed {lastAttempt.completedAt}
+                                </div>
+                              </div>
+                            )}
+                            
+                            <button
+                              onClick={() => startAssessment(assessment)}
+                              className="w-full px-4 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                            >
+                              <div className="flex items-center justify-center space-x-2">
+                                <ApperIcon name="Play" className="h-4 w-4" />
+                                <span>{isCompleted ? 'Retake Assessment' : 'Start Assessment'}</span>
+                              </div>
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Quiz Interface */}
+              {currentQuiz && !showQuizResults && (
+                <div className="glass-card rounded-2xl p-6">
+                  {/* Quiz Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-xl font-semibold text-surface-900 dark:text-surface-100">
+                        {currentQuiz.title}
+                      </h3>
+                      <p className="text-surface-600 dark:text-surface-400">
+                        Question {currentQuestionIndex + 1} of {currentQuiz.questions.length}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-surface-500 dark:text-surface-400">Time Remaining</div>
+                      <div className={`text-lg font-bold ${
+                        timeRemaining < 300 ? 'text-red-600 dark:text-red-400' : 'text-primary'
+                      }`}>
+                        {formatTime(timeRemaining)}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="mb-6">
+                    <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  {/* Current Question */}
+                  {currentQuiz.questions[currentQuestionIndex] && (
+                    <div>
+                      <h4 className="text-lg font-semibold mb-6 text-surface-900 dark:text-surface-100">
+                        {currentQuiz.questions[currentQuestionIndex].question}
+                      </h4>
+                      
+                      <div className="space-y-3 mb-8">
+                        {currentQuiz.questions[currentQuestionIndex].options.map((option, index) => (
+                          <div
+                            key={index}
+                            className={`quiz-option ${
+                              selectedAnswers[currentQuiz.questions[currentQuestionIndex].id] === index ? 'selected' : ''
+                            }`}
+                            onClick={() => selectAnswer(currentQuiz.questions[currentQuestionIndex].id, index)}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                selectedAnswers[currentQuiz.questions[currentQuestionIndex].id] === index
+                                  ? 'border-primary bg-primary'
+                                  : 'border-surface-300 dark:border-surface-600'
+                              }`}>
+                                {selectedAnswers[currentQuiz.questions[currentQuestionIndex].id] === index && (
+                                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                                )}
+                              </div>
+                              <span className="text-surface-900 dark:text-surface-100">{option}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Navigation Buttons */}
+                      <div className="flex justify-between">
+                        <button
+                          onClick={previousQuestion}
+                          disabled={currentQuestionIndex === 0}
+                          className="px-6 py-3 neu-button rounded-xl font-medium text-surface-700 dark:text-surface-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-200"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <ApperIcon name="ChevronLeft" className="h-4 w-4" />
+                            <span>Previous</span>
+                          </div>
+                        </button>
+                        
+                        {currentQuestionIndex === currentQuiz.questions.length - 1 ? (
+                          <button
+                            onClick={submitQuiz}
+                            className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <ApperIcon name="CheckCircle" className="h-4 w-4" />
+                              <span>Submit Quiz</span>
+                            </div>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={nextQuestion}
+                            disabled={selectedAnswers[currentQuiz.questions[currentQuestionIndex].id] === undefined}
+                            className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span>Next</span>
+                              <ApperIcon name="ChevronRight" className="h-4 w-4" />
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Quiz Results */}
+              {showQuizResults && quizResults && (
+                <div className="glass-card rounded-2xl p-6">
+                  <div className="text-center mb-8">
+                    <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                      quizResults.passed 
+                        ? 'bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30'
+                        : 'bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/30 dark:to-red-800/30'
+                    }`}>
+                      <ApperIcon 
+                        name={quizResults.passed ? "CheckCircle" : "XCircle"} 
+                        className={`h-10 w-10 ${
+                          quizResults.passed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                        }`} 
+                      />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                      {quizResults.passed ? '🎉 Congratulations!' : 'Assessment Complete'}
+                    </h3>
+                    
+                    <p className="text-surface-600 dark:text-surface-400 mb-4">
+                      {quizResults.passed 
+                        ? 'You passed the assessment and earned a certificate!' 
+                        : `You scored ${quizResults.score}%. You need ${currentQuiz.passingScore}% to pass.`
+                      }
+                    </p>
+                    
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-primary">{quizResults.score}%</div>
+                        <div className="text-sm text-surface-500 dark:text-surface-500">Score</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-primary">{quizResults.correctAnswers}/{quizResults.totalQuestions}</div>
+                        <div className="text-sm text-surface-500 dark:text-surface-500">Correct</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-primary">{formatTime(quizResults.timeTaken)}</div>
+                        <div className="text-sm text-surface-500 dark:text-surface-500">Time</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Detailed Results */}
+                  <div className="mb-8">
+                    <h4 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">
+                      Question Review
+                    </h4>
+                    
+                    <div className="space-y-4">
+                      {quizResults.detailedResults.map((result, index) => (
+                        <div key={result.questionId} className="border border-surface-200 dark:border-surface-700 rounded-xl p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <h5 className="font-medium text-surface-900 dark:text-surface-100 flex-1">
+                              {index + 1}. {result.question}
+                            </h5>
+                            <div className={`flex items-center space-x-1 text-sm font-medium ${
+                              result.isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                            }`}>
+                              <ApperIcon name={result.isCorrect ? "Check" : "X"} className="h-4 w-4" />
+                              <span>{result.isCorrect ? 'Correct' : 'Incorrect'}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 text-sm">
+                            {result.options.map((option, optionIndex) => (
+                              <div
+                                key={optionIndex}
+                                className={`p-2 rounded ${
+                                  optionIndex === result.correctAnswer
+                                    ? 'quiz-option correct'
+                                    : optionIndex === result.userAnswer && !result.isCorrect
+                                    ? 'quiz-option incorrect'
+                                    : 'bg-surface-50 dark:bg-surface-800'
+                                }`}
+                              >
+                                <div className="flex items-center space-x-2">
+                                  {optionIndex === result.correctAnswer && (
+                                    <ApperIcon name="Check" className="h-4 w-4 text-green-600" />
+                                  )}
+                                  {optionIndex === result.userAnswer && !result.isCorrect && (
+                                    <ApperIcon name="X" className="h-4 w-4 text-red-600" />
+                                  )}
+                                  <span>{option}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {result.explanation && (
+                            <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                              <div className="flex items-start space-x-2">
+                                <ApperIcon name="Info" className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                                <span className="text-sm text-blue-700 dark:text-blue-300">{result.explanation}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      onClick={retakeAssessment}
+                      className="px-6 py-3 neu-button rounded-xl font-medium text-surface-700 dark:text-surface-300 hover:scale-105 transition-all duration-200"
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <ApperIcon name="RotateCcw" className="h-4 w-4" />
+                        <span>Take Another Assessment</span>
+                      </div>
+                    </button>
+                    
+                    {!quizResults.passed && (
+                      <button
+                        onClick={() => {
+                          setShowQuizResults(false)
+                          startAssessment(currentQuiz)
+                        }}
+                        className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      >
+                        <div className="flex items-center justify-center space-x-2">
+                          <ApperIcon name="RefreshCw" className="h-4 w-4" />
+                          <span>Retake This Assessment</span>
+                        </div>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
         )}
+
 
 
         {/* Profile Tab */}
@@ -957,6 +1760,22 @@ const MainFeature = () => {
                       </button>
                     </div>
                   </div>
+                  {profile.certificates.length > 0 && (
+                    <div className="mt-6">
+                      <h5 className="text-md font-semibold mb-3 text-surface-900 dark:text-surface-100">
+                        Skill Certificates ({profile.certificates.length})
+                      </h5>
+                      <div className="flex flex-wrap gap-2">
+                        {profile.certificates.map((cert) => (
+                          <div key={cert.id} className="skill-badge">
+                            <ApperIcon name="Award" className="h-3 w-3" />
+                            <span>{cert.skill} - {cert.proficiencyLevel}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {profile.skills.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {profile.skills.map((skill, index) => (
@@ -1088,7 +1907,6 @@ const MainFeature = () => {
           </motion.div>
         )}
 
-        )}
       </AnimatePresence>
 
 

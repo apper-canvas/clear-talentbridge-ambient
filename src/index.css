@@ -36,6 +36,35 @@
   .job-card {
     @apply p-6 rounded-2xl border-2 border-transparent bg-gradient-to-br from-white to-surface-50 dark:from-surface-800 dark:to-surface-900 shadow-soft hover:border-primary/30 transition-all duration-300 hover:shadow-xl;
   }
+
+  .assessment-card {
+    @apply p-6 rounded-2xl border-2 border-transparent bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 shadow-soft hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-xl;
+  }
+
+  .quiz-option {
+    @apply p-4 border-2 border-surface-200 dark:border-surface-700 rounded-xl cursor-pointer transition-all duration-200 hover:border-primary hover:bg-primary/5;
+  }
+
+  .quiz-option.selected {
+    @apply border-primary bg-primary/10 text-primary;
+  }
+
+  .quiz-option.correct {
+    @apply border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400;
+  }
+
+  .quiz-option.incorrect {
+    @apply border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400;
+  }
+
+  .skill-badge {
+    @apply px-3 py-1 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border border-green-300 dark:border-green-600 rounded-full text-sm font-medium text-green-700 dark:text-green-400 flex items-center gap-1;
+  }
+
+  .certificate-card {
+    @apply p-6 rounded-2xl bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-2 border-yellow-200 dark:border-yellow-700 shadow-lg;
+  }
+
 }
 
 @layer utilities {
