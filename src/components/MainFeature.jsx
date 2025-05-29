@@ -271,9 +271,70 @@ const MainFeature = () => {
           ],
           correctAnswer: 2,
           explanation: 'Event handlers in React are passed as functions without calling them immediately.'
+        },
+        {
+          id: 6,
+          question: 'What is the purpose of useCallback hook?',
+          options: [
+            'To optimize expensive calculations',
+            'To memoize function references',
+            'To handle side effects',
+            'To manage component state'
+          ],
+          correctAnswer: 1,
+          explanation: 'useCallback returns a memoized version of the callback that only changes if one of the dependencies has changed.'
+        },
+        {
+          id: 7,
+          question: 'What is the difference between useMemo and useCallback?',
+          options: [
+            'useMemo memoizes values, useCallback memoizes functions',
+            'useMemo is for state, useCallback is for effects',
+            'useMemo is newer than useCallback',
+            'There is no difference'
+          ],
+          correctAnswer: 0,
+          explanation: 'useMemo memoizes the result of a computation, while useCallback memoizes the function itself.'
+        },
+        {
+          id: 8,
+          question: 'What are React Portals used for?',
+          options: [
+            'Creating new components',
+            'Rendering children into a different DOM node',
+            'Managing application state',
+            'Handling API calls'
+          ],
+          correctAnswer: 1,
+          explanation: 'React Portals provide a way to render children into a DOM node that exists outside the DOM hierarchy of the parent component.'
+        },
+        {
+          id: 9,
+          question: 'What is the purpose of Error Boundaries in React?',
+          options: [
+            'To handle network errors',
+            'To catch JavaScript errors in component tree',
+            'To validate form inputs',
+            'To manage loading states'
+          ],
+          correctAnswer: 1,
+          explanation: 'Error Boundaries are React components that catch JavaScript errors anywhere in their child component tree and display a fallback UI.'
+        },
+        {
+          id: 10,
+          question: 'What is the key benefit of React 18\'s Concurrent Features?',
+          options: [
+            'Faster rendering',
+            'Better SEO',
+            'Interruptible rendering for better user experience',
+            'Smaller bundle size'
+          ],
+          correctAnswer: 2,
+          explanation: 'React 18\'s concurrent features allow rendering to be interrupted and resumed, enabling better user experience by keeping the app responsive.'
         }
-      ]
-    },
+          }
+        ],
+
     {
       id: 'javascript-advanced',
       title: 'Advanced JavaScript',
@@ -318,9 +379,94 @@ const MainFeature = () => {
           ],
           correctAnswer: 1,
           explanation: 'let has block scope while var has function scope, and let prevents hoisting issues.'
+        },
+        {
+          id: 4,
+          question: 'What is the event loop in JavaScript?',
+          options: [
+            'A way to handle user events',
+            'The mechanism that handles asynchronous operations',
+            'A loop that repeats code',
+            'A method for iterating arrays'
+          ],
+          correctAnswer: 1,
+          explanation: 'The event loop is the mechanism that allows JavaScript to perform non-blocking operations by offloading operations to the system kernel.'
+        },
+        {
+          id: 5,
+          question: 'What is the difference between import and require?',
+          options: [
+            'import is ES6 modules, require is CommonJS',
+            'import is faster than require',
+            'require is more secure',
+            'There is no difference'
+          ],
+          correctAnswer: 0,
+          explanation: 'import is part of ES6 module syntax and is statically analyzed, while require is CommonJS and dynamically evaluated.'
+        },
+        {
+          id: 6,
+          question: 'What does the spread operator (...) do?',
+          options: [
+            'Creates a new array',
+            'Expands iterable elements',
+            'Deletes array elements',
+            'Sorts array elements'
+          ],
+          correctAnswer: 1,
+          explanation: 'The spread operator expands iterable elements (like arrays or objects) into individual elements.'
+        },
+        {
+          id: 7,
+          question: 'What is destructuring assignment?',
+          options: [
+            'Deleting object properties',
+            'Extracting values from arrays or objects into variables',
+            'Creating new objects',
+            'Merging multiple objects'
+          ],
+          correctAnswer: 1,
+          explanation: 'Destructuring assignment allows unpacking values from arrays or properties from objects into distinct variables.'
+        },
+        {
+          id: 8,
+          question: 'What is the difference between async/await and Promises?',
+          options: [
+            'async/await is older than Promises',
+            'async/await is syntactic sugar for Promises',
+            'Promises are faster',
+            'They serve completely different purposes'
+          ],
+          correctAnswer: 1,
+          explanation: 'async/await is syntactic sugar built on top of Promises, making asynchronous code easier to read and write.'
+        },
+        {
+          id: 9,
+          question: 'What is a JavaScript Map?',
+          options: [
+            'A function that transforms arrays',
+            'A data structure that holds key-value pairs',
+            'A way to iterate objects',
+            'A method for filtering arrays'
+          ],
+          correctAnswer: 1,
+          explanation: 'Map is a built-in object that holds key-value pairs and remembers the original insertion order of keys.'
+        },
+        {
+          id: 10,
+          question: 'What is the temporal dead zone?',
+          options: [
+            'A time when variables are undefined',
+            'The period between entering scope and variable declaration',
+            'A memory leak issue',
+            'A debugging technique'
+          ],
+          correctAnswer: 1,
+          explanation: 'The temporal dead zone is the period between entering the scope and the variable declaration where the variable cannot be accessed.'
         }
-      ]
-    },
+        }
+    ],
+
     {
       id: 'python-basics',
       title: 'Python Programming',
@@ -353,9 +499,106 @@ const MainFeature = () => {
           ],
           correctAnswer: 1,
           explanation: 'Functions in Python are defined using the def keyword.'
+        },
+        {
+          id: 3,
+          question: 'What is the difference between a list and a tuple in Python?',
+          options: [
+            'Lists are faster than tuples',
+            'Lists are mutable, tuples are immutable',
+            'Tuples can store more data',
+            'There is no difference'
+          ],
+          correctAnswer: 1,
+          explanation: 'Lists are mutable (can be changed after creation) while tuples are immutable (cannot be changed after creation).'
+        },
+        {
+          id: 4,
+          question: 'What is a Python dictionary?',
+          options: [
+            'A list of words',
+            'A collection of key-value pairs',
+            'A type of function',
+            'A way to define classes'
+          ],
+          correctAnswer: 1,
+          explanation: 'A dictionary in Python is a collection of key-value pairs that is ordered and changeable.'
+        },
+        {
+          id: 5,
+          question: 'What is the purpose of the __init__ method?',
+          options: [
+            'To delete objects',
+            'To initialize object attributes',
+            'To import modules',
+            'To handle errors'
+          ],
+          correctAnswer: 1,
+          explanation: 'The __init__ method is a constructor that initializes object attributes when an instance is created.'
+        },
+        {
+          id: 6,
+          question: 'What is a lambda function in Python?',
+          options: [
+            'A function with no name',
+            'A small anonymous function',
+            'A function that returns nothing',
+            'A function that handles errors'
+          ],
+          correctAnswer: 1,
+          explanation: 'A lambda function is a small anonymous function that can take any number of arguments but can only have one expression.'
+        },
+        {
+          id: 7,
+          question: 'What is the difference between append() and extend()?',
+          options: [
+            'append() adds one element, extend() adds multiple elements',
+            'extend() is faster than append()',
+            'append() works with strings, extend() with numbers',
+            'There is no difference'
+          ],
+          correctAnswer: 0,
+          explanation: 'append() adds a single element to the end of a list, while extend() adds all elements from an iterable.'
+        },
+        {
+          id: 8,
+          question: 'What is exception handling in Python?',
+          options: [
+            'A way to ignore errors',
+            'A mechanism to handle runtime errors gracefully',
+            'A method to prevent bugs',
+            'A debugging tool'
+          ],
+          correctAnswer: 1,
+          explanation: 'Exception handling allows you to catch and handle runtime errors gracefully using try-except blocks.'
+        },
+        {
+          id: 9,
+          question: 'What is a Python module?',
+          options: [
+            'A type of variable',
+            'A file containing Python code',
+            'A function parameter',
+            'A data type'
+          ],
+          correctAnswer: 1,
+          explanation: 'A module is a file containing Python definitions and statements that can be imported and used in other programs.'
+        },
+        {
+          id: 10,
+          question: 'What is the purpose of the range() function?',
+          options: [
+            'To calculate mathematical ranges',
+            'To generate a sequence of numbers',
+            'To find the length of lists',
+            'To sort numbers'
+          ],
+          correctAnswer: 1,
+          explanation: 'The range() function generates a sequence of numbers, commonly used for looping a specific number of times.'
         }
-      ]
-    },
+        }
+    ],
+
     {
       id: 'ux-design-principles',
       title: 'UX Design Principles',
@@ -388,9 +631,106 @@ const MainFeature = () => {
           ],
           correctAnswer: 1,
           explanation: 'A user persona is a fictional character that represents a segment of your target audience.'
+        },
+        {
+          id: 3,
+          question: 'What is the difference between UX and UI design?',
+          options: [
+            'UX is visual design, UI is interaction design',
+            'UX focuses on user experience, UI focuses on visual interface',
+            'UX is for web, UI is for mobile',
+            'There is no difference'
+          ],
+          correctAnswer: 1,
+          explanation: 'UX design focuses on the overall user experience and journey, while UI design focuses on the visual and interactive elements of the interface.'
+        },
+        {
+          id: 4,
+          question: 'What is a wireframe in UX design?',
+          options: [
+            'A high-fidelity prototype',
+            'A low-fidelity structural blueprint',
+            'A color scheme guide',
+            'A user research method'
+          ],
+          correctAnswer: 1,
+          explanation: 'A wireframe is a low-fidelity structural blueprint that shows the basic layout and hierarchy of a page or screen.'
+        },
+        {
+          id: 5,
+          question: 'What is user journey mapping?',
+          options: [
+            'Creating navigation menus',
+            'Visualizing the user\'s experience over time',
+            'Designing page layouts',
+            'Testing user interfaces'
+          ],
+          correctAnswer: 1,
+          explanation: 'User journey mapping visualizes the process that a user goes through to accomplish a goal with your product or service.'
+        },
+        {
+          id: 6,
+          question: 'What is accessibility in UX design?',
+          options: [
+            'Making designs look modern',
+            'Ensuring products are usable by people with disabilities',
+            'Creating mobile-friendly designs',
+            'Using popular design trends'
+          ],
+          correctAnswer: 1,
+          explanation: 'Accessibility ensures that products and services are usable by people with various abilities and disabilities.'
+        },
+        {
+          id: 7,
+          question: 'What is A/B testing in UX?',
+          options: [
+            'Testing two different user groups',
+            'Comparing two versions of a design',
+            'Testing on different devices',
+            'Testing accessibility features'
+          ],
+          correctAnswer: 1,
+          explanation: 'A/B testing compares two versions of a design to determine which performs better based on user behavior and metrics.'
+        },
+        {
+          id: 8,
+          question: 'What is a design system?',
+          options: [
+            'A software for designing',
+            'A collection of reusable components and guidelines',
+            'A design methodology',
+            'A type of prototype'
+          ],
+          correctAnswer: 1,
+          explanation: 'A design system is a collection of reusable components, patterns, and guidelines that ensure consistency across products.'
+        },
+        {
+          id: 9,
+          question: 'What is usability testing?',
+          options: [
+            'Testing if designs look good',
+            'Observing users interact with a product',
+            'Testing code functionality',
+            'Testing loading speeds'
+          ],
+          correctAnswer: 1,
+          explanation: 'Usability testing involves observing real users as they attempt to complete tasks with a product to identify usability issues.'
+        },
+        {
+          id: 10,
+          question: 'What is information architecture in UX?',
+          options: [
+            'The visual design of interfaces',
+            'The structural design of shared information environments',
+            'The coding structure of websites',
+            'The hardware architecture'
+          ],
+          correctAnswer: 1,
+          explanation: 'Information architecture involves organizing and structuring content in a way that helps users find information and complete tasks.'
         }
-      ]
-    }
+        }
+    ]
+
   ]
 
 
