@@ -235,6 +235,8 @@ const MainFeature = () => {
         {activeTab === 'resume' && (
           <ResumeBuilder key="resume" />
         )
+        }
+
 
         )}
 
