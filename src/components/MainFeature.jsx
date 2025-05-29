@@ -191,6 +191,8 @@ const MainFeature = () => {
         website: 'https://aidynamics.com'
       }
     }
+  ]
+
   // Skill Assessment Data
   const skillAssessments = [
     {
@@ -1209,6 +1211,9 @@ const MainFeature = () => {
               )}
             </div>
           </motion.div>
+        )}
+
+
         {/* Skill Assessments Tab */}
         {activeTab === 'assessments' && (
           <motion.div
