@@ -851,8 +851,6 @@ const CreateProfile = () => {
     )
   }
 
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-blue-50 to-purple-50 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       {/* Navigation */}
