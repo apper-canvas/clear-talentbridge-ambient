@@ -731,9 +731,8 @@ const MainFeature = () => {
           correctAnswer: 1,
           explanation: 'Information architecture involves organizing and structuring content in a way that helps users find information and complete tasks.'
         },
-    ]
-
-  ]
+      ]
+    }
 
 
 
