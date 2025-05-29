@@ -202,6 +202,8 @@ const MainFeature = () => {
   ]
 
   // Skill Assessment Data
+  const skillAssessments = [
+
 
 
     {
@@ -335,6 +337,8 @@ const MainFeature = () => {
         },
       ]
     }
+  ]
+
 
 
   const [filteredJobs, setFilteredJobs] = useState(mockJobs)
