@@ -7,6 +7,22 @@ import ResumeBuilder from './ResumeBuilder'
 
 const MainFeature = () => {
   const [activeTab, setActiveTab] = useState('search')
+const [showCreateModal, setShowCreateModal] = useState(false)
+  const [createFormData, setCreateFormData] = useState({
+    candidateName: '',
+    candidateEmail: '',
+    position: '',
+    company: '',
+    department: '',
+    location: '',
+    experience: '',
+    salary: '',
+    skills: [],
+    status: 'applied',
+    notes: ''
+  })
+  const [createFormErrors, setCreateFormErrors] = useState({})
+  const [newSkill, setNewSkill] = useState('')
 const [applicationFilters, setApplicationFilters] = useState({
     search: '',
     position: '',
@@ -145,6 +161,142 @@ const [applicationFilters, setApplicationFilters] = useState({
   })
 
   const applicationCounts = getApplicationCounts()
+// Create Application Functions
+  const validateCreateForm = () => {
+    const errors = {}
+    
+    if (!createFormData.candidateName.trim()) {
+      errors.candidateName = 'Candidate name is required'
+    }
+    
+    if (!createFormData.candidateEmail.trim()) {
+      errors.candidateEmail = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(createFormData.candidateEmail)) {
+      errors.candidateEmail = 'Please enter a valid email address'
+    }
+    
+    if (!createFormData.position.trim()) {
+      errors.position = 'Position is required'
+    }
+    
+    if (!createFormData.company.trim()) {
+      errors.company = 'Company is required'
+    }
+    
+    if (!createFormData.department.trim()) {
+      errors.department = 'Department is required'
+    }
+    
+    if (!createFormData.location.trim()) {
+      errors.location = 'Location is required'
+    }
+    
+    if (!createFormData.experience.trim()) {
+      errors.experience = 'Experience level is required'
+    }
+    
+    setCreateFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const handleCreateFormChange = (field, value) => {
+    setCreateFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+    
+    // Clear error when user starts typing
+    if (createFormErrors[field]) {
+      setCreateFormErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }))
+    }
+  }
+
+  const addSkill = () => {
+    if (newSkill.trim() && !createFormData.skills.includes(newSkill.trim())) {
+      setCreateFormData(prev => ({
+        ...prev,
+        skills: [...prev.skills, newSkill.trim()]
+      }))
+      setNewSkill('')
+    }
+  }
+
+  const removeSkill = (skillToRemove) => {
+    setCreateFormData(prev => ({
+      ...prev,
+      skills: prev.skills.filter(skill => skill !== skillToRemove)
+    }))
+  }
+
+  const handleCreateSubmit = (e) => {
+    e.preventDefault()
+    
+    if (!validateCreateForm()) {
+      toast.error('Please fix the form errors before submitting')
+      return
+    }
+
+    const newApplication = {
+      id: Math.max(...applications.map(app => app.id)) + 1,
+      candidateName: createFormData.candidateName,
+      candidateEmail: createFormData.candidateEmail,
+      position: createFormData.position,
+      department: createFormData.department,
+      appliedDate: new Date().toISOString().split('T')[0],
+      status: createFormData.status,
+      experience: createFormData.experience,
+      location: createFormData.location,
+      salary: createFormData.salary || 'Not specified',
+      resume: `${createFormData.candidateName.toLowerCase().replace(/\s+/g, '-')}-resume.pdf`,
+      coverLetter: createFormData.notes || 'No cover letter provided.',
+      skills: createFormData.skills,
+      avatar: '👤',
+      rating: 4.0,
+      notes: createFormData.notes
+    }
+
+    setApplications(prev => [newApplication, ...prev])
+    
+    // Reset form
+    setCreateFormData({
+      candidateName: '',
+      candidateEmail: '',
+      position: '',
+      company: '',
+      department: '',
+      location: '',
+      experience: '',
+      salary: '',
+      skills: [],
+      status: 'applied',
+      notes: ''
+    })
+    setCreateFormErrors({})
+    setShowCreateModal(false)
+    
+    toast.success(`Application for ${newApplication.candidateName} created successfully!`)
+  }
+
+  const resetCreateForm = () => {
+    setCreateFormData({
+      candidateName: '',
+      candidateEmail: '',
+      position: '',
+      company: '',
+      department: '',
+      location: '',
+      experience: '',
+      salary: '',
+      skills: [],
+      status: 'applied',
+      notes: ''
+    })
+    setCreateFormErrors({})
+    setNewSkill('')
+  }
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
@@ -603,6 +755,19 @@ const [applicationFilters, setApplicationFilters] = useState({
                 My Applications
               </h3>
 
+{/* Add Application Button */}
+              <div className="flex justify-between items-center mb-6">
+                <p className="text-surface-600 dark:text-surface-400">
+                  Manage and track all your job applications
+                </p>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300"
+                >
+                  <ApperIcon name="Plus" className="h-5 w-5" />
+                  Add Application
+                </button>
+              </div>
               {/* Stats Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
                 {Object.entries(applicationCounts).map(([status, count]) => {
@@ -798,6 +963,313 @@ const [applicationFilters, setApplicationFilters] = useState({
               </div>
             </div>
           </motion.div>
+        )}
+{/* Create Application Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <motion.div 
+              className="bg-white dark:bg-surface-800 rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                  Create New Application
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowCreateModal(false)
+                    resetCreateForm()
+                  }}
+                  className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="h-6 w-6 text-surface-500" />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateSubmit} className="space-y-6">
+                {/* Candidate Information */}
+                <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                    Candidate Information
+                  </h4>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={createFormData.candidateName}
+                        onChange={(e) => handleCreateFormChange('candidateName', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.candidateName 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                        placeholder="Enter candidate's full name"
+                      />
+                      {createFormErrors.candidateName && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.candidateName}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        value={createFormData.candidateEmail}
+                        onChange={(e) => handleCreateFormChange('candidateEmail', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.candidateEmail 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                        placeholder="candidate@email.com"
+                      />
+                      {createFormErrors.candidateEmail && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.candidateEmail}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Location *
+                      </label>
+                      <input
+                        type="text"
+                        value={createFormData.location}
+                        onChange={(e) => handleCreateFormChange('location', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.location 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                        placeholder="City, State/Country"
+                      />
+                      {createFormErrors.location && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.location}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Experience Level *
+                      </label>
+                      <select
+                        value={createFormData.experience}
+                        onChange={(e) => handleCreateFormChange('experience', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.experience 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                      >
+                        <option value="">Select experience level</option>
+                        <option value="Entry Level (0-2 years)">Entry Level (0-2 years)</option>
+                        <option value="Mid Level (3-5 years)">Mid Level (3-5 years)</option>
+                        <option value="Senior Level (6-8 years)">Senior Level (6-8 years)</option>
+                        <option value="Lead/Principal (9+ years)">Lead/Principal (9+ years)</option>
+                      </select>
+                      {createFormErrors.experience && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.experience}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Job Information */}
+                <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                    Job Information
+                  </h4>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Position *
+                      </label>
+                      <input
+                        type="text"
+                        value={createFormData.position}
+                        onChange={(e) => handleCreateFormChange('position', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.position 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                        placeholder="e.g., Senior React Developer"
+                      />
+                      {createFormErrors.position && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.position}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Company *
+                      </label>
+                      <input
+                        type="text"
+                        value={createFormData.company}
+                        onChange={(e) => handleCreateFormChange('company', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.company 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                        placeholder="Company name"
+                      />
+                      {createFormErrors.company && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.company}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Department *
+                      </label>
+                      <input
+                        type="text"
+                        value={createFormData.department}
+                        onChange={(e) => handleCreateFormChange('department', e.target.value)}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                          createFormErrors.department 
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                        }`}
+                        placeholder="e.g., Engineering, Design, Marketing"
+                      />
+                      {createFormErrors.department && (
+                        <p className="text-red-500 text-sm mt-1">{createFormErrors.department}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Salary Range
+                      </label>
+                      <input
+                        type="text"
+                        value={createFormData.salary}
+                        onChange={(e) => handleCreateFormChange('salary', e.target.value)}
+                        className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="e.g., $80,000 - $100,000"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Skills */}
+                <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                    Skills
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+                        className="flex-1 px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Add a skill (press Enter or click Add)"
+                      />
+                      <button
+                        type="button"
+                        onClick={addSkill}
+                        className="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors"
+                      >
+                        Add
+                      </button>
+                    </div>
+
+                    {createFormData.skills.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {createFormData.skills.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                          >
+                            {skill}
+                            <button
+                              type="button"
+                              onClick={() => removeSkill(skill)}
+                              className="hover:text-red-500 transition-colors"
+                            >
+                              <ApperIcon name="X" className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Application Settings */}
+                <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                  <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                    Application Settings
+                  </h4>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Initial Status
+                      </label>
+                      <select
+                        value={createFormData.status}
+                        onChange={(e) => handleCreateFormChange('status', e.target.value)}
+                        className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      >
+                        {Object.entries(statusConfig).map(([status, config]) => (
+                          <option key={status} value={status}>{config.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="md:col-span-1">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        Notes
+                      </label>
+                      <textarea
+                        value={createFormData.notes}
+                        onChange={(e) => handleCreateFormChange('notes', e.target.value)}
+                        rows={3}
+                        className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Additional notes about the application..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex gap-4 pt-4 border-t border-surface-200 dark:border-surface-600">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateModal(false)
+                      resetCreateForm()
+                    }}
+                    className="flex-1 px-6 py-3 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300"
+                  >
+                    Create Application
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
         )}
 
         {/* Skill Assessments Tab */}
