@@ -312,6 +312,158 @@ const [applicationFilters, setApplicationFilters] = useState({
     skillAssessments: [],
     certificates: []
   })
+// Profile Management State
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
+  const [profileFormData, setProfileFormData] = useState({
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@email.com',
+    phone: '+1 (555) 123-4567',
+    location: 'San Francisco, CA',
+    currentRole: 'Senior React Developer',
+    experienceLevel: 'Senior Level (6-8 years)',
+    preferredJobType: 'Full-time',
+    skills: ['React', 'JavaScript', 'TypeScript', 'Node.js', 'Python'],
+    about: 'Passionate software developer with 7+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud technologies.',
+    documents: [
+      { id: 1, name: 'John_Doe_Resume.pdf', type: 'Resume', uploadDate: '2024-01-15', size: '245 KB' },
+      { id: 2, name: 'Cover_Letter.pdf', type: 'Cover Letter', uploadDate: '2024-01-10', size: '89 KB' }
+    ],
+    skillAssessments: [
+      { id: 1, skill: 'React Development', score: 92, level: 'Expert', completedDate: '2024-01-12' },
+      { id: 2, skill: 'JavaScript Fundamentals', score: 88, level: 'Advanced', completedDate: '2024-01-08' }
+    ],
+    certificates: [
+      { id: 1, name: 'AWS Certified Developer', issuer: 'Amazon', issueDate: '2023-11-15', expiryDate: '2026-11-15' },
+      { id: 2, name: 'React Professional Certificate', issuer: 'Meta', issueDate: '2023-09-20', expiryDate: null }
+    ]
+  })
+  const [profileFormErrors, setProfileFormErrors] = useState({})
+  const [newProfileSkill, setNewProfileSkill] = useState('')
+
+  // Profile Functions
+  const calculateProfileCompletion = () => {
+    const fields = [
+      profileFormData.firstName,
+      profileFormData.lastName,
+      profileFormData.email,
+      profileFormData.phone,
+      profileFormData.location,
+      profileFormData.currentRole,
+      profileFormData.experienceLevel,
+      profileFormData.about,
+      profileFormData.skills.length > 0,
+      profileFormData.documents.length > 0
+    ]
+    
+    const completedFields = fields.filter(field => field && field !== '').length
+    return Math.round((completedFields / fields.length) * 100)
+  }
+
+  const validateProfileForm = () => {
+    const errors = {}
+    
+    if (!profileFormData.firstName.trim()) {
+      errors.firstName = 'First name is required'
+    }
+    
+    if (!profileFormData.lastName.trim()) {
+      errors.lastName = 'Last name is required'
+    }
+    
+    if (!profileFormData.email.trim()) {
+      errors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileFormData.email)) {
+      errors.email = 'Please enter a valid email address'
+    }
+    
+    if (!profileFormData.phone.trim()) {
+      errors.phone = 'Phone number is required'
+    }
+    
+    if (!profileFormData.location.trim()) {
+      errors.location = 'Location is required'
+    }
+    
+    setProfileFormErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const handleProfileFormChange = (field, value) => {
+    setProfileFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+    
+    // Clear error when user starts typing
+    if (profileFormErrors[field]) {
+      setProfileFormErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }))
+    }
+  }
+
+  const addProfileSkill = () => {
+    if (newProfileSkill.trim() && !profileFormData.skills.includes(newProfileSkill.trim())) {
+      setProfileFormData(prev => ({
+        ...prev,
+        skills: [...prev.skills, newProfileSkill.trim()]
+      }))
+      setNewProfileSkill('')
+      toast.success('Skill added successfully!')
+    }
+  }
+
+  const removeProfileSkill = (skillToRemove) => {
+    setProfileFormData(prev => ({
+      ...prev,
+      skills: prev.skills.filter(skill => skill !== skillToRemove)
+    }))
+    toast.success('Skill removed successfully!')
+  }
+
+  const handleProfileSubmit = (e) => {
+    e.preventDefault()
+    
+    if (!validateProfileForm()) {
+      toast.error('Please fix the form errors before submitting')
+      return
+    }
+
+    // Simulate saving profile data
+    setProfile(profileFormData)
+    setIsEditingProfile(false)
+    toast.success('Profile updated successfully!')
+  }
+
+  const handleDocumentUpload = () => {
+    // Simulate document upload
+    const newDocument = {
+      id: Math.max(...profileFormData.documents.map(doc => doc.id), 0) + 1,
+      name: 'New_Document.pdf',
+      type: 'Resume',
+      uploadDate: new Date().toISOString().split('T')[0],
+      size: '156 KB'
+    }
+    
+    setProfileFormData(prev => ({
+      ...prev,
+      documents: [...prev.documents, newDocument]
+    }))
+    
+    toast.success('Document uploaded successfully!')
+  }
+
+  const removeDocument = (documentId) => {
+    setProfileFormData(prev => ({
+      ...prev,
+      documents: prev.documents.filter(doc => doc.id !== documentId)
+    }))
+    toast.success('Document removed successfully!')
+  }
+
+  const completionPercentage = calculateProfileCompletion()
 // Skill Assessment State
   const [selectedAssessment, setSelectedAssessment] = useState(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -1885,8 +2037,7 @@ const [applicationFilters, setApplicationFilters] = useState({
             )}
           </motion.div>
         )}
-
-        {/* Profile Tab */}
+{/* Profile Tab */}
         {activeTab === 'profile' && (
           <motion.div
             key="profile"
@@ -1895,15 +2046,570 @@ const [applicationFilters, setApplicationFilters] = useState({
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="glass-card rounded-2xl p-6">
-              <h3 className="text-2xl font-bold mb-6 text-surface-900 dark:text-surface-100">
-                My Profile
-              </h3>
-              <div className="text-center py-12">
-                <ApperIcon name="User" className="h-16 w-16 text-surface-300 mx-auto mb-4" />
-                <p className="text-surface-600 dark:text-surface-400">
-                  Profile management will be implemented here
-                </p>
+            <div className="space-y-8">
+              {/* Profile Header */}
+              <div className="glass-card rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                    My Profile
+                  </h3>
+                  <button
+                    onClick={() => setIsEditingProfile(!isEditingProfile)}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                      isEditingProfile
+                        ? 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
+                        : 'bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg'
+                    }`}
+                  >
+                    <ApperIcon name={isEditingProfile ? 'X' : 'Edit'} className="h-5 w-5" />
+                    {isEditingProfile ? 'Cancel' : 'Edit Profile'}
+                  </button>
+                </div>
+
+                {/* Profile Completion */}
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Profile Completion
+                    </span>
+                    <span className="text-sm text-surface-600 dark:text-surface-400">
+                      {completionPercentage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${completionPercentage}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Profile Form/Display */}
+                {isEditingProfile ? (
+                  <form onSubmit={handleProfileSubmit} className="space-y-6">
+                    {/* Personal Information */}
+                    <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                        Personal Information
+                      </h4>
+                      
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            First Name *
+                          </label>
+                          <input
+                            type="text"
+                            value={profileFormData.firstName}
+                            onChange={(e) => handleProfileFormChange('firstName', e.target.value)}
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                              profileFormErrors.firstName 
+                                ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                            }`}
+                            placeholder="Enter your first name"
+                          />
+                          {profileFormErrors.firstName && (
+                            <p className="text-red-500 text-sm mt-1">{profileFormErrors.firstName}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Last Name *
+                          </label>
+                          <input
+                            type="text"
+                            value={profileFormData.lastName}
+                            onChange={(e) => handleProfileFormChange('lastName', e.target.value)}
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                              profileFormErrors.lastName 
+                                ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                            }`}
+                            placeholder="Enter your last name"
+                          />
+                          {profileFormErrors.lastName && (
+                            <p className="text-red-500 text-sm mt-1">{profileFormErrors.lastName}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Email Address *
+                          </label>
+                          <input
+                            type="email"
+                            value={profileFormData.email}
+                            onChange={(e) => handleProfileFormChange('email', e.target.value)}
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                              profileFormErrors.email 
+                                ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                            }`}
+                            placeholder="your.email@example.com"
+                          />
+                          {profileFormErrors.email && (
+                            <p className="text-red-500 text-sm mt-1">{profileFormErrors.email}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Phone Number *
+                          </label>
+                          <input
+                            type="tel"
+                            value={profileFormData.phone}
+                            onChange={(e) => handleProfileFormChange('phone', e.target.value)}
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                              profileFormErrors.phone 
+                                ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                            }`}
+                            placeholder="+1 (555) 123-4567"
+                          />
+                          {profileFormErrors.phone && (
+                            <p className="text-red-500 text-sm mt-1">{profileFormErrors.phone}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Location *
+                          </label>
+                          <input
+                            type="text"
+                            value={profileFormData.location}
+                            onChange={(e) => handleProfileFormChange('location', e.target.value)}
+                            className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all ${
+                              profileFormErrors.location 
+                                ? 'border-red-500 bg-red-50 dark:bg-red-900/20' 
+                                : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800'
+                            }`}
+                            placeholder="City, State/Country"
+                          />
+                          {profileFormErrors.location && (
+                            <p className="text-red-500 text-sm mt-1">{profileFormErrors.location}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Current Role
+                          </label>
+                          <input
+                            type="text"
+                            value={profileFormData.currentRole}
+                            onChange={(e) => handleProfileFormChange('currentRole', e.target.value)}
+                            className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="e.g., Senior React Developer"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Experience Level
+                          </label>
+                          <select
+                            value={profileFormData.experienceLevel}
+                            onChange={(e) => handleProfileFormChange('experienceLevel', e.target.value)}
+                            className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                          >
+                            <option value="">Select experience level</option>
+                            <option value="Entry Level (0-2 years)">Entry Level (0-2 years)</option>
+                            <option value="Mid Level (3-5 years)">Mid Level (3-5 years)</option>
+                            <option value="Senior Level (6-8 years)">Senior Level (6-8 years)</option>
+                            <option value="Lead/Principal (9+ years)">Lead/Principal (9+ years)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                            Preferred Job Type
+                          </label>
+                          <select
+                            value={profileFormData.preferredJobType}
+                            onChange={(e) => handleProfileFormChange('preferredJobType', e.target.value)}
+                            className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                          >
+                            <option value="">Select job type</option>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          About Me
+                        </label>
+                        <textarea
+                          value={profileFormData.about}
+                          onChange={(e) => handleProfileFormChange('about', e.target.value)}
+                          rows={4}
+                          className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                          placeholder="Tell us about yourself, your experience, and what you're passionate about..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Skills Section */}
+                    <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                        Skills
+                      </h4>
+                      
+                      <div className="space-y-4">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newProfileSkill}
+                            onChange={(e) => setNewProfileSkill(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addProfileSkill())}
+                            className="flex-1 px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            placeholder="Add a skill (press Enter or click Add)"
+                          />
+                          <button
+                            type="button"
+                            onClick={addProfileSkill}
+                            className="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors"
+                          >
+                            Add
+                          </button>
+                        </div>
+
+                        {profileFormData.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {profileFormData.skills.map((skill, index) => (
+                              <span
+                                key={index}
+                                className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                              >
+                                {skill}
+                                <button
+                                  type="button"
+                                  onClick={() => removeProfileSkill(skill)}
+                                  className="hover:text-red-500 transition-colors"
+                                >
+                                  <ApperIcon name="X" className="h-3 w-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Form Actions */}
+                    <div className="flex gap-4 pt-4 border-t border-surface-200 dark:border-surface-600">
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingProfile(false)}
+                        className="flex-1 px-6 py-3 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  /* Profile Display */
+                  <div className="space-y-6">
+                    {/* Personal Information Display */}
+                    <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                        Personal Information
+                      </h4>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Full Name
+                          </label>
+                          <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                            {profileFormData.firstName} {profileFormData.lastName}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Email
+                          </label>
+                          <p className="text-lg text-surface-900 dark:text-surface-100">
+                            {profileFormData.email}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Phone
+                          </label>
+                          <p className="text-lg text-surface-900 dark:text-surface-100">
+                            {profileFormData.phone}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Location
+                          </label>
+                          <p className="text-lg text-surface-900 dark:text-surface-100">
+                            {profileFormData.location}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Current Role
+                          </label>
+                          <p className="text-lg text-surface-900 dark:text-surface-100">
+                            {profileFormData.currentRole || 'Not specified'}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Experience Level
+                          </label>
+                          <p className="text-lg text-surface-900 dark:text-surface-100">
+                            {profileFormData.experienceLevel || 'Not specified'}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                            Preferred Job Type
+                          </label>
+                          <p className="text-lg text-surface-900 dark:text-surface-100">
+                            {profileFormData.preferredJobType || 'Not specified'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {profileFormData.about && (
+                        <div className="mt-6">
+                          <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+                            About Me
+                          </label>
+                          <p className="text-surface-900 dark:text-surface-100 leading-relaxed">
+                            {profileFormData.about}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Skills Display */}
+                    {profileFormData.skills.length > 0 && (
+                      <div className="bg-surface-50 dark:bg-surface-700 rounded-xl p-4">
+                        <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                          Skills
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {profileFormData.skills.map((skill, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Documents Section */}
+              <div className="glass-card rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100">
+                    Documents
+                  </h4>
+                  <button
+                    onClick={handleDocumentUpload}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-colors"
+                  >
+                    <ApperIcon name="Upload" className="h-4 w-4" />
+                    Upload Document
+                  </button>
+                </div>
+
+                {profileFormData.documents.length > 0 ? (
+                  <div className="grid gap-4">
+                    {profileFormData.documents.map((document) => (
+                      <motion.div
+                        key={document.id}
+                        className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-700 rounded-xl"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                            <ApperIcon name="FileText" className="h-5 w-5 text-red-600 dark:text-red-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-surface-900 dark:text-surface-100">
+                              {document.name}
+                            </p>
+                            <p className="text-sm text-surface-600 dark:text-surface-400">
+                              {document.type} • {document.size} • Uploaded {new Date(document.uploadDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toast.info(`Downloading ${document.name}`)}
+                            className="p-2 text-surface-600 dark:text-surface-400 hover:text-primary transition-colors"
+                            title="Download"
+                          >
+                            <ApperIcon name="Download" className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => removeDocument(document.id)}
+                            className="p-2 text-surface-600 dark:text-surface-400 hover:text-red-500 transition-colors"
+                            title="Delete"
+                          >
+                            <ApperIcon name="Trash2" className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <ApperIcon name="FileText" className="h-12 w-12 text-surface-300 mx-auto mb-3" />
+                    <p className="text-surface-600 dark:text-surface-400">
+                      No documents uploaded yet. Upload your resume and other relevant documents.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Skill Assessments Section */}
+              <div className="glass-card rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100">
+                    Skill Assessments
+                  </h4>
+                  <button
+                    onClick={() => setActiveTab('assessments')}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-colors"
+                  >
+                    <ApperIcon name="Award" className="h-4 w-4" />
+                    Take Assessment
+                  </button>
+                </div>
+
+                {profileFormData.skillAssessments.length > 0 ? (
+                  <div className="grid gap-4">
+                    {profileFormData.skillAssessments.map((assessment) => (
+                      <motion.div
+                        key={assessment.id}
+                        className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-700 rounded-xl"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            assessment.level === 'Expert' ? 'bg-green-100 dark:bg-green-900/30' :
+                            assessment.level === 'Advanced' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                            assessment.level === 'Intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
+                            'bg-surface-200 dark:bg-surface-600'
+                          }`}>
+                            <ApperIcon name="Award" className={`h-5 w-5 ${
+                              assessment.level === 'Expert' ? 'text-green-600 dark:text-green-400' :
+                              assessment.level === 'Advanced' ? 'text-blue-600 dark:text-blue-400' :
+                              assessment.level === 'Intermediate' ? 'text-yellow-600 dark:text-yellow-400' :
+                              'text-surface-500'
+                            }`} />
+                          </div>
+                          <div>
+                            <p className="font-medium text-surface-900 dark:text-surface-100">
+                              {assessment.skill}
+                            </p>
+                            <p className="text-sm text-surface-600 dark:text-surface-400">
+                              Score: {assessment.score}% • Level: {assessment.level} • Completed {new Date(assessment.completedDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          assessment.level === 'Expert' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                          assessment.level === 'Advanced' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                          assessment.level === 'Intermediate' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                          'bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-300'
+                        }`}>
+                          {assessment.level}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <ApperIcon name="Award" className="h-12 w-12 text-surface-300 mx-auto mb-3" />
+                    <p className="text-surface-600 dark:text-surface-400">
+                      No skill assessments completed yet. Take assessments to showcase your skills.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Certificates Section */}
+              <div className="glass-card rounded-2xl p-6">
+                <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-6">
+                  Certificates
+                </h4>
+
+                {profileFormData.certificates.length > 0 ? (
+                  <div className="grid gap-4">
+                    {profileFormData.certificates.map((certificate) => (
+                      <motion.div
+                        key={certificate.id}
+                        className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-700 rounded-xl"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                            <ApperIcon name="Award" className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-surface-900 dark:text-surface-100">
+                              {certificate.name}
+                            </p>
+                            <p className="text-sm text-surface-600 dark:text-surface-400">
+                              Issued by {certificate.issuer} • {new Date(certificate.issueDate).toLocaleDateString()}
+                              {certificate.expiryDate && ` • Expires ${new Date(certificate.expiryDate).toLocaleDateString()}`}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => toast.info(`Viewing certificate: ${certificate.name}`)}
+                          className="text-primary hover:text-primary-dark transition-colors"
+                        >
+                          <ApperIcon name="ExternalLink" className="h-4 w-4" />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <ApperIcon name="Award" className="h-12 w-12 text-surface-300 mx-auto mb-3" />
+                    <p className="text-surface-600 dark:text-surface-400">
+                      No certificates added yet. Add your professional certifications and achievements.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
