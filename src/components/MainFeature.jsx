@@ -934,6 +934,418 @@ const [applicationFilters, setApplicationFilters] = useState({
   )
 
 
+// Job Posting State
+  const [jobFormData, setJobFormData] = useState({
+    title: '',
+    company: '',
+    location: '',
+    type: '',
+    experience: '',
+    salary: {
+      min: '',
+      max: '',
+      currency: 'USD'
+    },
+    description: '',
+    requirements: '',
+    benefits: '',
+    skills: [],
+    newSkill: '',
+    remote: false,
+    urgent: false,
+    category: '',
+    applicationDeadline: ''
+  })
+
+  const [currentJobStep, setCurrentJobStep] = useState(1)
+  const totalJobSteps = 3
+
+  // Job Posting Functions
+  const handleJobInputChange = (field, value) => {
+    setJobFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleJobSalaryChange = (field, value) => {
+    setJobFormData(prev => ({
+      ...prev,
+      salary: { ...prev.salary, [field]: value }
+    }))
+  }
+
+  const addJobSkill = () => {
+    if (jobFormData.newSkill.trim() && !jobFormData.skills.includes(jobFormData.newSkill.trim())) {
+      setJobFormData(prev => ({
+        ...prev,
+        skills: [...prev.skills, prev.newSkill.trim()],
+        newSkill: ''
+      }))
+    }
+  }
+
+  const removeJobSkill = (skillToRemove) => {
+    setJobFormData(prev => ({
+      ...prev,
+      skills: prev.skills.filter(skill => skill !== skillToRemove)
+    }))
+  }
+
+  const nextJobStep = () => {
+    if (currentJobStep < totalJobSteps) {
+      setCurrentJobStep(currentJobStep + 1)
+    }
+  }
+
+  const prevJobStep = () => {
+    if (currentJobStep > 1) {
+      setCurrentJobStep(currentJobStep - 1)
+    }
+  }
+
+  const handleJobSubmit = (e) => {
+    e.preventDefault()
+    toast.success('Job posted successfully!')
+    console.log('Job data:', jobFormData)
+    
+    // Reset form
+    setJobFormData({
+      title: '',
+      company: '',
+      location: '',
+      type: '',
+      experience: '',
+      salary: { min: '', max: '', currency: 'USD' },
+      description: '',
+      requirements: '',
+      benefits: '',
+      skills: [],
+      newSkill: '',
+      remote: false,
+      urgent: false,
+      category: '',
+      applicationDeadline: ''
+    })
+    setCurrentJobStep(1)
+  }
+
+  const renderJobStep = () => {
+    switch (currentJobStep) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-2xl font-semibold text-surface-900 dark:text-surface-100 mb-6">
+              Basic Information
+            </h3>
+            
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Job Title *
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., Senior React Developer"
+                value={jobFormData.title}
+                onChange={(e) => handleJobInputChange('title', e.target.value)}
+                className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Company Name *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Your company name"
+                  value={jobFormData.company}
+                  onChange={(e) => handleJobInputChange('company', e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Location *
+                </label>
+                <input
+                  type="text"
+                  placeholder="City, State or Remote"
+                  value={jobFormData.location}
+                  onChange={(e) => handleJobInputChange('location', e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Job Type *
+                </label>
+                <select
+                  value={jobFormData.type}
+                  onChange={(e) => handleJobInputChange('type', e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                >
+                  <option value="">Select job type</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Freelance">Freelance</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Experience Level *
+                </label>
+                <select
+                  value={jobFormData.experience}
+                  onChange={(e) => handleJobInputChange('experience', e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                >
+                  <option value="">Select experience level</option>
+                  <option value="Entry-level">Entry-level</option>
+                  <option value="Mid-level">Mid-level</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Executive">Executive</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Category *
+                </label>
+                <select
+                  value={jobFormData.category}
+                  onChange={(e) => handleJobInputChange('category', e.target.value)}
+                  className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                >
+                  <option value="">Select category</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Design">Design</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Education">Education</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Salary Range
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                <input
+                  type="number"
+                  placeholder="Min salary"
+                  value={jobFormData.salary.min}
+                  onChange={(e) => handleJobSalaryChange('min', e.target.value)}
+                  className="px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+                <input
+                  type="number"
+                  placeholder="Max salary"
+                  value={jobFormData.salary.max}
+                  onChange={(e) => handleJobSalaryChange('max', e.target.value)}
+                  className="px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+                <select
+                  value={jobFormData.salary.currency}
+                  onChange={(e) => handleJobSalaryChange('currency', e.target.value)}
+                  className="px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="CAD">CAD</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Application Deadline
+              </label>
+              <input
+                type="date"
+                value={jobFormData.applicationDeadline}
+                onChange={(e) => handleJobInputChange('applicationDeadline', e.target.value)}
+                className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="remote"
+                  checked={jobFormData.remote}
+                  onChange={(e) => handleJobInputChange('remote', e.target.checked)}
+                  className="h-4 w-4 text-primary focus:ring-primary border-surface-300 rounded"
+                />
+                <label htmlFor="remote" className="ml-2 text-surface-700 dark:text-surface-300">
+                  Remote work available
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="urgent"
+                  checked={jobFormData.urgent}
+                  onChange={(e) => handleJobInputChange('urgent', e.target.checked)}
+                  className="h-4 w-4 text-primary focus:ring-primary border-surface-300 rounded"
+                />
+                <label htmlFor="urgent" className="ml-2 text-surface-700 dark:text-surface-300">
+                  Urgent hiring
+                </label>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-2xl font-semibold text-surface-900 dark:text-surface-100 mb-6">
+              Job Description & Requirements
+            </h3>
+            
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Job Description *
+              </label>
+              <textarea
+                rows={6}
+                placeholder="Describe the role, responsibilities, and what makes this position exciting..."
+                value={jobFormData.description}
+                onChange={(e) => handleJobInputChange('description', e.target.value)}
+                className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Requirements *
+              </label>
+              <textarea
+                rows={5}
+                placeholder="List the required qualifications, experience, and technical skills..."
+                value={jobFormData.requirements}
+                onChange={(e) => handleJobInputChange('requirements', e.target.value)}
+                className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Benefits & Perks
+              </label>
+              <textarea
+                rows={4}
+                placeholder="Describe the benefits, perks, and what makes your company a great place to work..."
+                value={jobFormData.benefits}
+                onChange={(e) => handleJobInputChange('benefits', e.target.value)}
+                className="w-full px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+              />
+            </div>
+          </div>
+        )
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-2xl font-semibold text-surface-900 dark:text-surface-100 mb-6">
+              Skills & Final Details
+            </h3>
+            
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Required Skills
+              </label>
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  placeholder="Add a skill"
+                  value={jobFormData.newSkill}
+                  onChange={(e) => handleJobInputChange('newSkill', e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addJobSkill())}
+                  className="flex-1 px-4 py-3 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={addJobSkill}
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  Add
+                </button>
+              </div>
+              
+              {jobFormData.skills.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    Added Skills
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {jobFormData.skills.map((skill, index) => (
+                      <div key={index} className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm cursor-pointer" onClick={() => removeJobSkill(skill)}>
+                        <span>{skill}</span>
+                        <ApperIcon name="X" className="h-3 w-3 hover:text-red-500" />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">
+                    Click on a skill to remove it
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Job Preview */}
+            <div className="bg-surface-50 dark:bg-surface-800/50 rounded-xl p-6">
+              <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">
+                Job Preview
+              </h4>
+              <div className="space-y-3 text-sm">
+                <div><span className="font-medium">Title:</span> {jobFormData.title || 'Not specified'}</div>
+                <div><span className="font-medium">Company:</span> {jobFormData.company || 'Not specified'}</div>
+                <div><span className="font-medium">Location:</span> {jobFormData.location || 'Not specified'}</div>
+                <div><span className="font-medium">Type:</span> {jobFormData.type || 'Not specified'}</div>
+                <div><span className="font-medium">Experience:</span> {jobFormData.experience || 'Not specified'}</div>
+                <div><span className="font-medium">Category:</span> {jobFormData.category || 'Not specified'}</div>
+                {(jobFormData.salary.min || jobFormData.salary.max) && (
+                  <div>
+                    <span className="font-medium">Salary:</span> 
+                    {jobFormData.salary.min && `${jobFormData.salary.currency} ${jobFormData.salary.min}`}
+                    {jobFormData.salary.min && jobFormData.salary.max && ' - '}
+                    {jobFormData.salary.max && `${jobFormData.salary.currency} ${jobFormData.salary.max}`}
+                  </div>
+                )}
+                {jobFormData.skills.length > 0 && (
+                  <div>
+                    <span className="font-medium">Skills:</span> {jobFormData.skills.join(', ')}
+                  </div>
+                )}
+                {jobFormData.remote && <div className="text-primary font-medium">✓ Remote work available</div>}
+                {jobFormData.urgent && <div className="text-red-500 font-medium">🔥 Urgent hiring</div>}
+              </div>
+            </div>
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }
   return (
     <div className="max-w-6xl mx-auto">
       {/* Tab Navigation */}
@@ -1157,8 +1569,7 @@ const [applicationFilters, setApplicationFilters] = useState({
           </motion.div>
         )}
 
-
-        {/* Post Job Tab */}
+{/* Post Job Tab */}
         {activeTab === 'post' && (
           <motion.div
             key="post"
@@ -1171,12 +1582,83 @@ const [applicationFilters, setApplicationFilters] = useState({
               <h3 className="text-2xl font-bold mb-6 text-surface-900 dark:text-surface-100">
                 Post a New Job
               </h3>
-              <div className="text-center py-12">
-                <ApperIcon name="Plus" className="h-16 w-16 text-surface-300 mx-auto mb-4" />
-                <p className="text-surface-600 dark:text-surface-400">
-                  Job posting functionality will be implemented here
-                </p>
+
+              {/* Progress Bar */}
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  {Array.from({ length: totalJobSteps }, (_, index) => {
+                    const stepNumber = index + 1
+                    const isActive = stepNumber === currentJobStep
+                    const isCompleted = stepNumber < currentJobStep
+                    
+                    return (
+                      <div key={stepNumber} className="flex items-center">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                          isActive 
+                            ? 'bg-gradient-to-r from-primary to-secondary text-white' 
+                            : isCompleted 
+                              ? 'bg-green-500 text-white'
+                              : 'bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
+                        }`}>
+                          {isCompleted ? (
+                            <ApperIcon name="Check" className="h-5 w-5" />
+                          ) : (
+                            stepNumber
+                          )}
+                        </div>
+                        {stepNumber < totalJobSteps && (
+                          <div className={`w-16 h-1 mx-2 rounded transition-all ${
+                            isCompleted ? 'bg-green-500' : 'bg-surface-200 dark:bg-surface-700'
+                          }`} />
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="text-center">
+                  <span className="text-sm text-surface-600 dark:text-surface-400">
+                    Step {currentJobStep} of {totalJobSteps}
+                  </span>
+                </div>
               </div>
+
+              {/* Form */}
+              <form onSubmit={handleJobSubmit}>
+                {renderJobStep()}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  <button
+                    type="button"
+                    onClick={prevJobStep}
+                    disabled={currentJobStep === 1}
+                    className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                      currentJobStep === 1
+                        ? 'bg-surface-200 dark:bg-surface-700 text-surface-400 cursor-not-allowed'
+                        : 'neu-button text-surface-700 dark:text-surface-300 hover:text-primary'
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  
+                  {currentJobStep === totalJobSteps ? (
+                    <button
+                      type="submit"
+                      className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                    >
+                      Post Job
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={nextJobStep}
+                      className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </motion.div>
         )}
